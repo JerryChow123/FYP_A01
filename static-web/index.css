@@ -1,6 +1,5 @@
 h1 {
-  background-color: #166639;
-  color: #ffffff;
+  color: #fe0b0b;
   font-family: 'Abril Fatface', cursive;
   font-size: 3rem;
   letter-spacing: 2px;
@@ -10,18 +9,18 @@ h1 {
 .table{
   width: 100px;
   height: 50px;
-  background: #166639;
+  background: #ffffff;
   font-family: 'Geo', sans-serif;
   font-size: 16px;
-  color: white;
+  color: #e20303;
   border-radius: 5px;
-  border-color: #ffffff;
+  border-color: #e20303;
   box-shadow: 0px 0px 0px #9ac0ff;
   postion: absolute;
 }
 
 body{
-  background: #166639;
+  background: #ffffff;
   padding: 50px 50px;
 }
 
