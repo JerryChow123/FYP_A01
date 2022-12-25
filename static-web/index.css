@@ -9,13 +9,13 @@ h1 {
 .table{
   width: 100px;
   height: 50px;
-  background: #0a070b;
+  background: #f2f2f2;
   font-family: "Times New Roman", Times, serif;
   font-size: 20px;
-  color: #f9f9f9;
+  color: #0c0101;
   border-radius: 5px;
-  border-color: #eeeeee;
-  box-shadow: 0px 0px 0px #9ac0ff;
+  border-color: #090501;
+  box-shadow: 0px 0px 0px #e20303;
   postion: absolute;
 }
 
