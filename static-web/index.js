@@ -131,4 +131,6 @@ function Refresh() {
     };
 
     $('#table').bootstrapTable(data);
+
+   
 }
