@@ -15,20 +15,92 @@ function getCookie(cname) {
     return "";
 }
 
+function ShowTables() {
+    $('#question_table').show();
+    $('#mark_table').show();
+}
+
+function HideTables() {
+    $('#question_table').hide();
+    $('#mark_table').hide();
+}
+
 function UserAuth() {
     let username = getCookie('username');
     let password = getCookie('password');
-    const url = ''
+    //const url = 'http://192.168.0.135:5000/';
+    const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-        body: 'username='+username +'&'+ 'password='+password
+        body:   'username='+username +'&'+ 
+                'password='+password
     })
     .then(response => response.json())
     .then(data => {
         if (data['success'] == true) {
             $('#loginform').hide();
             $('#errorbox').hide();
+            ShowTables();
+            $('#logout').show();
+            
+            if (data['questions'] != null) {
+                let questions = [];
+                for (let i in data['questions']) {
+                    questions.push(data['questions'][i])
+                }
+                //window.alert(questions);
+                let question_data = {
+                    columns: [{
+                        field: 'id',
+                        title: 'Q ID'
+                    }, {
+                        field: 'question',
+                        title: 'Question'
+                    }, {
+                        field: 'optionA',
+                        title: 'Option A'
+                    }, {
+                        field: 'optionB',
+                        title: 'Option B'
+                    }, {
+                        field: 'optionC',
+                        title: 'Option C'
+                    }, {
+                        field: 'optionD',
+                        title: 'Option D'
+                    }, {
+                        field: 'answer',
+                        title: 'Answer'
+                    }],
+                    data: questions
+                };
+                $('#question_table').bootstrapTable(question_data);
+            }
+
+            if (data['marks'] != null) {
+                let marks = [];
+                for (let i in data['marks']) {
+                    marks.push(data['marks'][i])
+                }
+                let mark_data = {
+                    columns: [{
+                        field: 'id',
+                        title: 'Game ID'
+                    }, {
+                        field: 'name',
+                        title: 'Student Name'
+                    }, {
+                        field: 'date',
+                        title: 'Date'
+                    }, {
+                        field: 'marks',
+                        title: 'Marks'
+                    }],
+                    data: marks
+                };
+                $('#mark_table').bootstrapTable(mark_data);
+            }
         } else {
             $('#username').val('');
             $('#password').val('');
@@ -37,13 +109,16 @@ function UserAuth() {
             setCookie('password', '', 0);
             $('#errorbox').html('wrong username or password');
             $('#errorbox').show();
+            $('#logout').hide();
         }
     })
     .catch(err => {
+        //window.alert(err);
         $('#errorbox').html('connection failed');
         $('#errorbox').show();
         setCookie('username', '', 0);
         setCookie('password', '', 0);
+        $('#logout').hide();
     });
 }
 
@@ -54,83 +129,25 @@ function OnLogin() {
     setCookie('password', password, 30);
     UserAuth();
 }
-`use strict`;
-function refreshTime() {
-  const timeDisplay = document.getElementById("time");
-  const dateString = new Date().toLocaleString();
-  const formattedString = dateString.replace(", ", " - ");
-  timeDisplay.textContent = formattedString;
-}
-  setInterval(refreshTime, 1000);
 
+function OnLogout() {
+    setCookie('username', '', 0);
+    setCookie('password', '', 0);
+    window.location.reload();
+}
 
 function Refresh() {
     $('#loginform').hide();
     $('#errorbox').hide();
+    $('#logout').hide();
     
     if (getCookie('username') != '')
+    {
         UserAuth();
+    }
     else
+    {
         $('#loginform').show();
-
-    data = {
-        columns: [{
-            field: 'id',
-            title: 'Item ID'
-        }, {
-            field: 'name',
-            title: 'Item Name'
-        }, {
-            field: 'price',
-            title: 'Item Price'
-        }],
-        data: [{
-            id: 1,
-            name: 'Item 1',
-            price: '$1'
-        }, {
-            id: 2,
-            name: 'Item 2',
-            price: '$2'
-        }, {
-            id: 3,
-            name: 'Item 3',
-            price: '$3'
-        },{
-            id: 4,
-            name: 'Item 4',
-            price: '$4'
-        }, {
-            id: 5,
-            name: 'Item 5',
-            price: '$5'
-        }, {
-            id: 6,
-            name: 'Item 6',
-            price: '$6'
-        }, {
-            id: 7,
-            name: 'Item 7',
-            price: '$7'
-        }, {
-            id: 8,
-            name: 'Item 8',
-            price: '$8'
-        }, {
-            id: 9,
-            name: 'Item 9',
-            price: '$9'
-        }, {
-            id: 10,
-            name: 'Item 10',
-            price: '$10'
-        },
-    
-    
-    ]
-    };
-
-    $('#table').bootstrapTable(data);
-
-   
+        HideTables();
+    }
 }
