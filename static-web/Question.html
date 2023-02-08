@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -90,11 +90,11 @@ n:0	//指定起始的數字
     <span></span>
     <span></span>
     <ul id="menu">
-      <a href="index.html"><li>Home</li></a>
-      <a href="Question.html"><li>Enter Question</li></a>
-      <a href="Vocabulary.html"><li>Enter Vocabulary</li></a>
-      <a href="Complete_Sentence.html"><li>Enter Complete Sentence</li></a>
-      <a href="leaderboard.html"><li>Leaderboard</li></a>
+        <a href="index.html"><li>Home</li></a>
+        <a href="Question.html"><li>Enter Question</li></a>
+        <a href="Vocabulary.html"><li>Enter Vocabulary</li></a>
+        <a href="Complete_Sentence.html"><li>Enter Complete Sentence</li></a>
+        <a href="leaderboard.html"><li>Leaderboard</li></a>
     </ul>
   </div>
 </nav>
@@ -125,51 +125,82 @@ n:0	//指定起始的數字
                 }
               }
             </style>
-            <div class="card mb-3" >
+          </section>
+          <!-- Section: Design Block -->
+          <section id="loginform" class=" text-center text-lg-start">
+            <style>
+              .rounded-t-5 {
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+              }
+
+              @media (min-width: 992px) {
+                .rounded-tr-lg-0 {
+                  border-top-right-radius: 0;
+                }
+
+                .rounded-bl-lg-5 {
+                  border-bottom-left-radius: 0.5rem;
+                }
+              }
+            </style>
+            <div class="card mb-3">
               <div class="row g-0 d-flex align-items-center">
                 <div class="col-lg-4 d-none d-lg-flex">
-                  <img src="https://cdn-icons-png.flaticon.com/512/2619/2619285.png" alt="Trendy Pants and Shoes"
+                  <img src="https://pixy.org/src/91/thumbs350/910473.jpg" alt="Teacher"
                     class="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5" />
                 </div>
                 <div class="col-lg-8">
                   <div class="card-body py-5 px-md-5">
-
                     <form method="post" target="output" action="http://192.168.0.135:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
                       <!-- Email input -->
                       <div class="form-outline mb-4">
-                        <label class="form-label" for="form2Example1">Username</label>
-                        <input placeholder="Enter your username" type="text" id="username" name="username" class="form-control" />
+                        <label class="form-label" for="form2Example1">Question</label>
+                        <input placeholder="Enter Question" type="text" id="Question" name="Question" class="form-control" />
                       </div>
 
                       <!-- Password input -->
                       <div class="form-outline mb-4">
-                        <label class="form-label" for="form2Example2">Password</label>
-                        <input placeholder="Enter your password" type="password" id="password" name="password" class="form-control" />
+                        <label class="form-label" for="form2Example2">Options A</label>
+                        <input placeholder="Enter Options A" type="text" id="Options A" name="Options A" class="form-control" />
+                      </div>
+
+                      <div class="form-outline mb-4">
+                        <label class="form-label" for="form2Example2">Options B</label>
+                        <input placeholder="Enter Options B" type="text" id="Options B" name="Options B" class="form-control" />
+                      </div>
+
+                      <div class="form-outline mb-4">
+                        <label class="form-label" for="form2Example2">Options C</label>
+                        <input placeholder="Enter Options C" type="text" id="Options C" name="Options C" class="form-control" />
+                      </div>
+
+                      <div class="form-outline mb-4">
+                        <label class="form-label" for="form2Example2">Options D</label>
+                        <input placeholder="Enter Options D" type="text" id="Options D" name="Options D" class="form-control" />
+                      </div>
+
+                      <div class="form-outline mb-4">
+                        <label class="form-label" for="form2Example2">Correct Answer</label>
+                        <input placeholder="Enter correct answer" type="text" id="correct answer" name="correct answer" class="form-control" />
                       </div>
 
                       <!-- 2 column grid layout for inline styling -->
                       <div class="d-none row mb-4">
                         <div class="col d-flex justify-content-center">
-                          <!-- Checkbox -->
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="rememberme" name="rememberme" checked />
-                            <label class="form-check-label" for="form2Example31"> Remember me </label>
-                          </div>
                         </div>
 
-                        <div class="col">
-                          <!-- Simple link -->
-                          <a href="#!">Forgot password?</a>
-                        </div>
                       </div>
 
                       <!-- Submit button -->
 
                     </form>
-                    <button onclick="OnLogin();" t="submit" class="btn btn-primary btn-block mb-4" value="Login">Login</button>
+                    <button onclick="OnLogin();" t="confirm" class="btn btn-primary btn-block mb-4" value="Login">confirm</button>
                   </div>
                 </div>
               </div>
             </div>
+
+
 </body>
 </html>
