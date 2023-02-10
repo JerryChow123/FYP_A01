@@ -52,9 +52,6 @@ function UserAuth() {
                 //window.alert(questions);
                 let question_data = {
                     columns: [{
-                        field: 'id',
-                        title: 'Q ID'
-                    }, {
                         field: 'question',
                         title: 'Question'
                     }, {
@@ -85,9 +82,6 @@ function UserAuth() {
                 }
                 let mark_data = {
                     columns: [{
-                        field: 'id',
-                        title: 'Game ID'
-                    }, {
                         field: 'name',
                         title: 'Student Name'
                     }, {

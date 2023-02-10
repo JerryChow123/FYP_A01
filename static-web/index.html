@@ -100,7 +100,12 @@ n:0	//指定起始的數字
 </nav>
     <div class="container">
       <div class="row">
-        <h1 class="mt-4 mb-4 text-center">FYP A01 Learning Escape Game Project</h1>
+        <div class="col">
+          <h1 class="mt-4 mb-4 text-center">FYP A01 Learning Escape Game Project</h1>
+        </div>
+        <div class="col-1 mt-4">
+          <button id="logout" onclick="OnLogout();" class="btn btn-danger justify-content-end">Logout</button>
+        </div>
       </div>
       <div class="row">
         <div id="errorbox" class="alert alert-danger text-center" role="alert">SHOW ERROR</div>
@@ -110,17 +115,17 @@ n:0	//指定起始的數字
           <!-- Section: Design Block -->
           <section id="loginform" class=" text-center text-lg-start">
             <style>
-              .rounded-t-5 {
+              #loginform .rounded-t-5 {
                 border-top-left-radius: 0.5rem;
                 border-top-right-radius: 0.5rem;
               }
 
               @media (min-width: 992px) {
-                .rounded-tr-lg-0 {
+                #loginform .rounded-tr-lg-0 {
                   border-top-right-radius: 0;
                 }
 
-                .rounded-bl-lg-5 {
+                #loginform .rounded-bl-lg-5 {
                   border-bottom-left-radius: 0.5rem;
                 }
               }
@@ -171,5 +176,10 @@ n:0	//指定起始的數字
                 </div>
               </div>
             </div>
+          </section>
+          <!-- Section: Design Block -->
+          <iframe id="output" name="output" style="display:none;">...</iframe>
+          <table id="question_table"></table>
+          <table id="mark_table" class="mt-3"></table>
 </body>
 </html>
