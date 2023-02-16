@@ -3,6 +3,8 @@ from google.cloud import storage
 # Imports the Google Cloud client library
 from google.cloud import speech
 
+import datetime
+
 # Instantiates a client
 client = speech.SpeechClient()
 
@@ -47,6 +49,27 @@ def upload_blob_from_memory(bucket_name, contents, destination_blob_name):
         f"{destination_blob_name} with contents {contents} uploaded to {bucket_name}."
     )
 
+def delete_blob(bucket_name, blob_name):
+    """Deletes a blob from the bucket."""
+    # bucket_name = "your-bucket-name"
+    # blob_name = "your-object-name"
+
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+    generation_match_precondition = None
+
+    # Optional: set a generation-match precondition to avoid potential race conditions
+    # and data corruptions. The request to delete is aborted if the object's
+    # generation number does not match your precondition.
+    blob.reload()  # Fetch blob metadata to use in generation_match_precondition.
+    generation_match_precondition = blob.generation
+
+    blob.delete(if_generation_match=generation_match_precondition)
+
+    print(f"Blob {blob_name} deleted.")
+
 def speech_to_text(request):
     # Set CORS headers for the preflight request
     if request.method == 'OPTIONS':
@@ -71,10 +94,12 @@ def speech_to_text(request):
     if file.filename == '':
         return ('No selected file', 200, headers)
 
-    upload_blob_from_memory('speech210137969', file.read(), 'speech_to_text/test.wav')
+    filename = 'speech_to_text/' + str(datetime.datetime.now()) + '.wav'
+
+    upload_blob_from_memory('speech210137969', file.read(), filename)
 
     # The name of the audio file to transcribe
-    gcs_uri = "gs://speech210137969/speech_to_text/test.wav"
+    gcs_uri = "gs://speech210137969/" + filename
 
     audio = speech.RecognitionAudio(uri=gcs_uri)
 
@@ -93,4 +118,7 @@ def speech_to_text(request):
         output += "Transcript: {}".format(result.alternatives[0].transcript)
 
     print(output)
+
+    delete_blob('speech210137969', filename)
+
     return (output, 200, headers)

@@ -18,17 +18,21 @@ function getCookie(cname) {
 function ShowTables() {
     $('#question_table').show();
     $('#mark_table').show();
+    $('#dictation_table').show();
+    $('#sentence_table').show();
 }
 
 function HideTables() {
     $('#question_table').hide();
     $('#mark_table').hide();
+    $('#dictation_table').hide();
+    $('#sentence_table').hide();
 }
 
 function UserAuth() {
     let username = getCookie('username');
     let password = getCookie('password');
-    //const url = 'http://192.168.0.135:5000/';
+    //const url = 'http://127.0.0.1:5000/';
     const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
@@ -38,6 +42,8 @@ function UserAuth() {
     })
     .then(response => response.json())
     .then(data => {
+        $('#loginpage').show();
+
         if (data['success'] == true) {
             $('#loginform').hide();
             $('#errorbox').hide();
@@ -95,6 +101,36 @@ function UserAuth() {
                 };
                 $('#mark_table').bootstrapTable(mark_data);
             }
+
+            if (data['dictation'] != null) {
+                let dictation = [];
+                for (let i in data['dictation']) {
+                    dictation.push(data['dictation'][i])
+                }
+                let dictation_data = {
+                    columns: [{
+                        field: 'string',
+                        title: 'Dictation'
+                    }],
+                    data: dictation
+                };
+                $('#dictation_table').bootstrapTable(dictation_data);
+            }
+
+            if (data['sentence'] != null) {
+                let sentence = [];
+                for (let i in data['sentence']) {
+                    sentence.push(data['sentence'][i])
+                }
+                let sentence_data = {
+                    columns: [{
+                        field: 'string',
+                        title: 'Sentence'
+                    }],
+                    data: sentence
+                };
+                $('#sentence_table').bootstrapTable(sentence_data);
+            }
         } else {
             $('#username').val('');
             $('#password').val('');
@@ -107,6 +143,8 @@ function UserAuth() {
         }
     })
     .catch(err => {
+        $('#loginpage').show();
+
         //window.alert(err);
         $('#errorbox').html('connection failed');
         $('#errorbox').show();
