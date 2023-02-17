@@ -79,6 +79,7 @@ function UserAuth() {
                     data: questions
                 };
                 $('#question_table').bootstrapTable(question_data);
+                $('#question_table tbody tr').append('<td><a href="#" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete </a></td>');
             }
 
             if (data['marks'] != null) {
