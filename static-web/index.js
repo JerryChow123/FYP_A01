@@ -29,7 +29,31 @@ function HideTables() {
     $('#sentence_table').hide();
 }
 
-function UserAuth() {
+function questiontable_delete(elem) {
+    let td = elem.parentElement;
+    let tds = td.parentElement;
+    alert(tds.childNodes[0].innerHTML);
+}
+
+function marktable_delete(elem) {
+    let td = elem.parentElement;
+    let tds = td.parentElement;
+    alert(tds.childNodes[1].innerHTML);
+}
+
+function dictationtable_delete(elem) {
+    let td = elem.parentElement;
+    let tds = td.parentElement;
+    alert(tds.childNodes[0].innerHTML);
+}
+
+function sentencetable_delete(elem) {
+    let td = elem.parentElement;
+    let tds = td.parentElement;
+    alert(tds.childNodes[0].innerHTML);
+}
+
+function UserAuth(jump) {
     let username = getCookie('username');
     let password = getCookie('password');
     //const url = 'http://127.0.0.1:5000/';
@@ -79,7 +103,6 @@ function UserAuth() {
                     data: questions
                 };
                 $('#question_table').bootstrapTable(question_data);
-                $('#question_table tbody tr').append('<td><a href="#" class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete </a></td>');
             }
 
             if (data['marks'] != null) {
@@ -132,6 +155,12 @@ function UserAuth() {
                 };
                 $('#sentence_table').bootstrapTable(sentence_data);
             }
+
+            $('#question_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="questiontable_delete(this)">Delete </button></td>');
+            $('#mark_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="marktable_delete(this)">Delete </button></td>');
+            $('#dictation_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="dictationtable_delete(this)">Delete </button></td>');
+            $('#sentence_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="sentencetable_delete(this)">Delete </button></td>');
+
         } else {
             $('#username').val('');
             $('#password').val('');
@@ -141,6 +170,8 @@ function UserAuth() {
             $('#errorbox').html('wrong username or password');
             $('#errorbox').show();
             $('#logout').hide();
+            if (jump)
+                location.href = 'index.html';
         }
     })
     .catch(err => {
@@ -152,6 +183,8 @@ function UserAuth() {
         setCookie('username', '', 0);
         setCookie('password', '', 0);
         $('#logout').hide();
+        if (jump)
+            location.href = 'index.html';
     });
 }
 
@@ -166,7 +199,17 @@ function OnLogin() {
 function OnLogout() {
     setCookie('username', '', 0);
     setCookie('password', '', 0);
-    window.location.reload();
+    location.reload();
+}
+
+function SignedRefresh() {
+    if (getCookie('username') != '') {
+        UserAuth(true);
+    }
+    else {
+        alert('You must log-in first!');
+        location.href = 'index.html';
+    }
 }
 
 function Refresh() {
@@ -174,12 +217,10 @@ function Refresh() {
     $('#errorbox').hide();
     $('#logout').hide();
     
-    if (getCookie('username') != '')
-    {
-        UserAuth();
+    if (getCookie('username') != '') {
+        UserAuth(false);
     }
-    else
-    {
+    else {
         $('#loginform').show();
         HideTables();
     }
