@@ -188,6 +188,10 @@ function UserAuth(jump) {
     });
 }
 
+function questiondata_add() {
+    
+}
+
 function OnLogin() {
     var username = $('#username').val();
     var password = $('#password').val();
