@@ -138,37 +138,37 @@ n:0	//指定起始的數字
                 </div>
                 <div class="col-lg-8">
                   <div class="card-body py-5 px-md-5">
-                    <form method="post" target="output" action="http://192.168.0.135:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
+                    <form method="post" target="output" onsubmit="OnSubmitQuestions(this);" action="http://127.0.0.1:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
                       <!-- Email input -->
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example1">Question</label>
-                        <input placeholder="Enter Question" type="text" id="Question" name="Question" class="form-control" />
+                        <input placeholder="Enter Question" type="text" id="Question" name="Question" class="form-control" required>
                       </div>
 
                       <!-- Password input -->
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example2">Options A</label>
-                        <input placeholder="Enter Options A" type="text" id="Options A" name="Options A" class="form-control" />
+                        <input placeholder="Enter Options A" type="text" id="OptionsA" name="OptionsA" class="form-control" required>
                       </div>
 
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example2">Options B</label>
-                        <input placeholder="Enter Options B" type="text" id="Options B" name="Options B" class="form-control" />
+                        <input placeholder="Enter Options B" type="text" id="OptionsB" name="OptionsB" class="form-control" required>
                       </div>
 
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example2">Options C</label>
-                        <input placeholder="Enter Options C" type="text" id="Options C" name="Options C" class="form-control" />
+                        <input placeholder="Enter Options C" type="text" id="OptionsC" name="OptionsC" class="form-control" required>
                       </div>
 
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example2">Options D</label>
-                        <input placeholder="Enter Options D" type="text" id="Options D" name="Options D" class="form-control" />
+                        <input placeholder="Enter Options D" type="text" id="OptionsD" name="OptionsD" class="form-control" required>
                       </div>
 
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example2">Correct Answer</label>
-                        <input placeholder="Enter correct answer" type="text" id="correct answer" name="correct answer" class="form-control" />
+                        <input placeholder="Enter correct answer" type="text" id="answer" name="answer" class="form-control" required>
                       </div>
 
                       <!-- 2 column grid layout for inline styling -->
@@ -179,9 +179,9 @@ n:0	//指定起始的數字
                       </div>
 
                       <!-- Submit button -->
+                      <input type="submit" t="confirm" class="btn btn-primary btn-block mb-4" value="Submit">
 
                     </form>
-                    <button onclick="OnLogin();" t="confirm" class="btn btn-primary btn-block mb-4" value="Login">confirm</button>
                   </div>
                 </div>
               </div>

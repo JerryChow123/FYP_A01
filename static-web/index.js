@@ -202,6 +202,48 @@ function OnLogout() {
     location.reload();
 }
 
+function OnSubmitQuestions(form) {
+    let username = getCookie('username');
+    let password = getCookie('password');
+
+    formData = new FormData(form);
+    formData.append('username', username);
+    formData.append('password', password);
+
+    let str =   'question: ' + $('#Question').val() + '\n' +
+                'optionA: ' + $('#OptionsA').val() + '\n' +
+                'optionB: ' + $('#OptionsB').val() + '\n' +
+                'optionC: ' + $('#OptionsC').val() + '\n' +
+                'optionD: ' + $('#OptionsD').val() + '\n' +
+                'answer: ' + $('#answer').val() + '\n'
+
+    alert(str);
+    return;
+
+    const url = 'http://127.0.0.1:5000/';
+    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+        body:   'username='+username+'&'+ 
+                'password='+password+'&'+
+                'question='+$('#Question')+'&'+
+                'optionA='+$('#OptionsA')+'&'+
+                'optionB='+$('#OptionsB')+'&'+
+                'optionC='+$('#OptionsC')+'&'+
+                'optionD='+$('#OptionsD')+'&'+
+                'answer='+$('#answer')
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data['success'] == true) {
+        } else {
+        }
+    })
+    .catch(err => {
+    });
+}
+
 function SignedRefresh() {
     if (getCookie('username') != '') {
         UserAuth(true);
