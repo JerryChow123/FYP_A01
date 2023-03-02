@@ -138,7 +138,7 @@ n:0	//指定起始的數字
                 </div>
                 <div class="col-lg-8">
                   <div class="card-body py-5 px-md-5">
-                    <form method="post" target="output" action="http://192.168.0.135:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
+                    <form onsubmit="return OnSubmitDictation();" method="post" target="output" action="http://192.168.0.135:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
                       <!-- Email input -->
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example1">Vocabulary</label>
@@ -153,9 +153,9 @@ n:0	//指定起始的數字
                       </div>
 
                       <!-- Submit button -->
+                      <input type="submit" t="confirm" class="btn btn-primary btn-block mb-4" value="Submit">
 
                     </form>
-                    <button onclick="OnLogin();" t="confirm" class="btn btn-primary btn-block mb-4" value="Login">confirm</button>
                   </div>
                 </div>
               </div>

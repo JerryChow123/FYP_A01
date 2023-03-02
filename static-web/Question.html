@@ -138,7 +138,7 @@ n:0	//指定起始的數字
                 </div>
                 <div class="col-lg-8">
                   <div class="card-body py-5 px-md-5">
-                    <form method="post" target="output" onsubmit="OnSubmitQuestions(this);" action="http://127.0.0.1:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
+                    <form onsubmit="return OnSubmitQuestions();" method="post" target="output" action="http://127.0.0.1:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
                       <!-- Email input -->
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example1">Question</label>

@@ -32,25 +32,33 @@ function HideTables() {
 function questiontable_delete(elem) {
     let td = elem.parentElement;
     let tds = td.parentElement;
-    alert(tds.childNodes[0].innerHTML);
+    let key = tds.childNodes[0].innerHTML;
+    if (confirm(key))
+        delete_data('questions', 'question', key);
 }
 
 function marktable_delete(elem) {
     let td = elem.parentElement;
     let tds = td.parentElement;
-    alert(tds.childNodes[1].innerHTML);
+    let key = tds.childNodes[1].innerHTML;
+    if (confirm(key))
+        delete_data('marks', 'date', key);
 }
 
 function dictationtable_delete(elem) {
     let td = elem.parentElement;
     let tds = td.parentElement;
-    alert(tds.childNodes[0].innerHTML);
+    let key = tds.childNodes[0].innerHTML;
+    if (confirm(key))
+        delete_data('dictation', 'string', key);
 }
 
 function sentencetable_delete(elem) {
     let td = elem.parentElement;
     let tds = td.parentElement;
-    alert(tds.childNodes[0].innerHTML);
+    let key = tds.childNodes[0].innerHTML;
+    if (confirm(key))
+        delete_data('sentence', 'string', key);
 }
 
 function UserAuth(jump) {
@@ -188,8 +196,42 @@ function UserAuth(jump) {
     });
 }
 
-function questiondata_add() {
-    
+function delete_data(table, key, value) {
+    let username = getCookie('username');
+    let password = getCookie('password');
+
+    const url = 'http://127.0.0.1:5000/';
+    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+        body:   'username='+username+'&'+ 
+                'password='+password+'&'+
+                'operation=2&'+
+                'table='+table+'&'+
+                'key='+key+'&'+
+                'value='+value
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data['success'] == true) {
+            if (data['deleted'] > 0) {
+                alert(data['message']);
+                location.reload();
+            }
+            else {
+                $('errorbox').html(data['message']);
+                $('errorbox').show();
+            }
+        } else {
+            $('#errorbox').html('wrong username or password');
+            $('#errorbox').show();
+        }
+    })
+    .catch(err => {
+        $('#errorbox').html('connection failed');
+        $('#errorbox').show();
+    });
 }
 
 function OnLogin() {
@@ -206,23 +248,24 @@ function OnLogout() {
     location.reload();
 }
 
-function OnSubmitQuestions(form) {
+var str;
+
+function OnSubmitQuestions() {
+    if (!$('form')[0].checkValidity())
+        return false;
+
     let username = getCookie('username');
     let password = getCookie('password');
 
-    formData = new FormData(form);
-    formData.append('username', username);
-    formData.append('password', password);
-
-    let str =   'question: ' + $('#Question').val() + '\n' +
+    str =       'question: ' + $('#Question').val() + '\n' +
                 'optionA: ' + $('#OptionsA').val() + '\n' +
                 'optionB: ' + $('#OptionsB').val() + '\n' +
                 'optionC: ' + $('#OptionsC').val() + '\n' +
                 'optionD: ' + $('#OptionsD').val() + '\n' +
                 'answer: ' + $('#answer').val() + '\n'
 
-    alert(str);
-    return;
+    if (!confirm(str))
+        return false;
 
     const url = 'http://127.0.0.1:5000/';
     //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
@@ -231,21 +274,134 @@ function OnSubmitQuestions(form) {
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
         body:   'username='+username+'&'+ 
                 'password='+password+'&'+
-                'question='+$('#Question')+'&'+
-                'optionA='+$('#OptionsA')+'&'+
-                'optionB='+$('#OptionsB')+'&'+
-                'optionC='+$('#OptionsC')+'&'+
-                'optionD='+$('#OptionsD')+'&'+
-                'answer='+$('#answer')
+                'table=questions&'+
+                'key=question&'+
+                'operation=1&'+
+                'question='+$('#Question').val()+'&'+
+                'optionA='+$('#OptionsA').val()+'&'+
+                'optionB='+$('#OptionsB').val()+'&'+
+                'optionC='+$('#OptionsC').val()+'&'+
+                'optionD='+$('#OptionsD').val()+'&'+
+                'answer='+$('#answer').val()
     })
     .then(response => response.json())
     .then(data => {
         if (data['success'] == true) {
+            if (data['inserted'] == true) {
+                alert(data['message']);
+                location.reload();
+            }
+            else {
+                $('errorbox').html(data['message']);
+                $('errorbox').show();
+            }
         } else {
+            $('#errorbox').html('wrong username or password');
+            $('#errorbox').show();
         }
     })
     .catch(err => {
+        $('#errorbox').html('connection failed');
+        $('#errorbox').show();
     });
+
+    return false;
+}
+
+function OnSubmitDictation() {
+    if (!$('form')[0].checkValidity())
+        return false;
+
+    let username = getCookie('username');
+    let password = getCookie('password');
+
+    str =       'Vocabulary: ' + $('#vocabulary').val();
+
+    if (!confirm(str))
+        return false;
+
+    const url = 'http://127.0.0.1:5000/';
+    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+        body:   'username='+username+'&'+ 
+                'password='+password+'&'+
+                'table=dictation&'+
+                'key=string&'+
+                'operation=1&'+
+                'string='+$('#vocabulary').val()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data['success'] == true) {
+            if (data['inserted'] == true) {
+                alert(data['message']);
+                location.reload();
+            }
+            else {
+                $('errorbox').html(data['message']);
+                $('errorbox').show();
+            }
+        } else {
+            $('#errorbox').html('wrong username or password');
+            $('#errorbox').show();
+        }
+    })
+    .catch(err => {
+        $('#errorbox').html('connection failed');
+        $('#errorbox').show();
+    });
+
+    return false;
+}
+
+function OnSubmitSentence() {
+    if (!$('form')[0].checkValidity())
+        return false;
+
+    let username = getCookie('username');
+    let password = getCookie('password');
+
+    str =       'Sentence: ' + $('#sentence').val();
+
+    if (!confirm(str))
+        return false;
+
+    const url = 'http://127.0.0.1:5000/';
+    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+        body:   'username='+username+'&'+ 
+                'password='+password+'&'+
+                'table=sentence&'+
+                'key=string&'+
+                'operation=1&'+
+                'string='+$('#sentence').val()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data['success'] == true) {
+            if (data['inserted'] == true) {
+                alert(data['message']);
+                location.reload();
+            }
+            else {
+                $('errorbox').html(data['message']);
+                $('errorbox').show();
+            }
+        } else {
+            $('#errorbox').html('wrong username or password');
+            $('#errorbox').show();
+        }
+    })
+    .catch(err => {
+        $('#errorbox').html('connection failed');
+        $('#errorbox').show();
+    });
+
+    return false;
 }
 
 function SignedRefresh() {
