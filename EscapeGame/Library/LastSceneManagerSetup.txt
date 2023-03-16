@@ -1,0 +1,9 @@
+sceneSetups:
+- path: Assets/EscapeGame.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
+- path: Assets/DrawBox.unity
+  isLoaded: 1
+  isActive: 0
+  isSubScene: 0
