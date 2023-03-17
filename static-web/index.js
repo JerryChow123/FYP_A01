@@ -1,3 +1,6 @@
+const url = 'http://127.0.0.1:5000/';
+//const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+
 function setCookie(cname, cvalue, exmins) {
     var d = new Date();
     d.setTime(d.getTime() + (exmins * 60 * 1000));
@@ -64,8 +67,6 @@ function sentencetable_delete(elem) {
 function UserAuth(jump) {
     let username = getCookie('username');
     let password = getCookie('password');
-    //const url = 'http://127.0.0.1:5000/';
-    const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
@@ -185,7 +186,7 @@ function UserAuth(jump) {
     .catch(err => {
         $('#loginpage').show();
 
-        //window.alert(err);
+        window.alert(err);
         $('#errorbox').html('connection failed');
         $('#errorbox').show();
         setCookie('username', '', 0);
@@ -200,8 +201,6 @@ function delete_data(table, key, value) {
     let username = getCookie('username');
     let password = getCookie('password');
 
-    const url = 'http://127.0.0.1:5000/';
-    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
@@ -267,8 +266,6 @@ function OnSubmitQuestions() {
     if (!confirm(str))
         return false;
 
-    const url = 'http://127.0.0.1:5000/';
-    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
@@ -320,8 +317,6 @@ function OnSubmitDictation() {
     if (!confirm(str))
         return false;
 
-    const url = 'http://127.0.0.1:5000/';
-    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
@@ -368,8 +363,6 @@ function OnSubmitSentence() {
     if (!confirm(str))
         return false;
 
-    const url = 'http://127.0.0.1:5000/';
-    //const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
