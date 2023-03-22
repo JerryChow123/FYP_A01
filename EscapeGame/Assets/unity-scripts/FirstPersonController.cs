@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using FreeDraw;
 using Newtonsoft.Json;
@@ -134,10 +135,6 @@ namespace StarterAssets
 			}
 			else
 			{
-				// Test
-				var sub = GameObject.Find("SubTitle").transform.Find("Text").GetComponent<SubtitleManager>();
-				sub.DisplaySubtitle("Hello", 3f);
-				Debug.Log(sub);
 				var data = www.downloadHandler.text;
 				Debug.Log(data);
 				var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
@@ -154,8 +151,76 @@ namespace StarterAssets
 			}
 		}
 
+		SubtitleManager SubTitleRequest, SubTitleResponse;
+		VoiceRecorder recorder;
+		float recorder_nexttime;
+
+		IEnumerator AccessDialogflow(byte[] audio_bytes)
+		{
+			WWWForm form = new WWWForm();
+			form.AddBinaryData("file", audio_bytes, "test", "");
+			form.AddField("username", "teacher");
+			form.AddField("password", "teacher");
+			var url = "http://127.0.0.1:5000/";
+			//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/speech";
+			UnityWebRequest www = UnityWebRequest.Post(url, form);
+			yield return www.SendWebRequest();
+
+			if (www.result != UnityWebRequest.Result.Success)
+			{
+				Debug.Log(www.error);
+			}
+			else
+			{
+				Debug.Log("Upload complete!");
+				var data = www.downloadHandler.text;
+				Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+				if (dict["content"].Length > 0)
+				{
+					var audio = Convert.FromBase64String(dict["content"]);
+					Debug.Log("==================== SIZE -> " + audio.Length);
+					float seconds = (float)audio.Length / 40000f;
+					Debug.Log("==================== Seconds -> " + seconds.ToString());
+					recorder_nexttime = Time.fixedTime + seconds;
+					SubTitleRequest.DisplaySubtitle(dict["query_text"], seconds);
+					SubTitleResponse.DisplaySubtitle(dict["response_text"], seconds);
+					var audio_player = GameObject.Find("Muryotaisu").GetComponent<AudioSource>();
+					audio_player.clip = ConvertBytesToClip(audio);
+					audio_player.Play();
+				}
+			}
+		}
+
+		AudioClip ConvertBytesToClip(byte[] rawData)
+		{
+			float[] samples = new float[rawData.Length / 2];
+			float rescaleFactor = 32767;
+			short st = 0;
+			float ft = 0;
+
+			for (int i = 0; i < rawData.Length; i+=2)
+			{
+				st = BitConverter.ToInt16(rawData, i);
+				ft = st / rescaleFactor;
+				samples[i / 2] = ft;
+			}
+
+			AudioClip audioClip = AudioClip.Create("mySound", samples.Length, 1, 24000, false);
+			audioClip.SetData(samples, 0);
+			return audioClip;
+		}
+
 		private void Start()
 		{
+			// Test
+			SubTitleRequest = GameObject.Find("SubTitle").transform.Find("Request").GetComponent<SubtitleManager>();
+			SubTitleResponse = GameObject.Find("SubTitle").transform.Find("Response").GetComponent<SubtitleManager>();
+			recorder = GameObject.Find("VoiceRecorder").GetComponent<VoiceRecorder>();
+
+			SubTitleRequest.DisplaySubtitle("", 1f);
+			SubTitleResponse.DisplaySubtitle("", 1f);
+			recorder_nexttime = 0f;
+
 			// MC問題 data
 			all_questions = new List<Question>();
 			StartCoroutine(GetQuestions());
@@ -197,6 +262,27 @@ namespace StarterAssets
 
 		void KeyPress_Think()
 		{
+			if (Time.fixedTime > recorder_nexttime)
+			{
+				if (Input.GetKey(KeyCode.V))
+				{
+					if (!Microphone.IsRecording(null))
+					{
+						SubTitleRequest.DisplaySubtitle("[Recording]", 9999f);
+						recorder.Begin();
+					}
+
+					return;
+				}
+				else if (Microphone.IsRecording(null))
+				{
+					SubTitleRequest.DisplaySubtitle("", 0.1f);
+					recorder.Stop();
+					StartCoroutine(AccessDialogflow(recorder.data));
+					recorder_nexttime = Time.fixedTime + 2f;
+				}
+			}
+
 			if (Input.GetKeyDown(KeyCode.G))
 			{
 				Scene s = SceneManager.GetSceneByName("EscapeGame");

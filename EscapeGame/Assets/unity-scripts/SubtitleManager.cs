@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class SubtitleManager : MonoBehaviour
 {
-    public TextMeshProUGUI subtitleText; // Reference to the TextMeshPro component
+    //public TextMeshProUGUI subtitleText; // Reference to the TextMeshPro component
+    public Text subtitleText;
 
     private IEnumerator currentSubtitleCoroutine; // Used to stop the current subtitle coroutine
 

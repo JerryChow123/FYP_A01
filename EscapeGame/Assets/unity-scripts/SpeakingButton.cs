@@ -20,11 +20,16 @@ public class SpeakingButton : MonoBehaviour
             button.onClick.AddListener(ButtonOnClick);
     }
 
-    IEnumerator SendVoiceRecord(string wavPath)
+    IEnumerator SendVoiceRecord(string wavPath=null, byte[] audio_bytes=null)
     {
         WWWForm form = new WWWForm();
-        byte[] myData = System.IO.File.ReadAllBytes(wavPath);
-        form.AddBinaryData("file", myData, "test", "");
+        if (wavPath != null)
+        {
+            byte[] myData = System.IO.File.ReadAllBytes(wavPath);
+            form.AddBinaryData("file", myData, "test", "");
+        }
+        else
+            form.AddBinaryData("file", audio_bytes, "test", "");
         //var url = "http://192.168.0.135:5000/";
         var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/speech";
         UnityWebRequest www = UnityWebRequest.Post(url, form);
@@ -61,9 +66,10 @@ public class SpeakingButton : MonoBehaviour
         if (Microphone.IsRecording(null))
         {
             recorder.Stop();
-            recorder.fileName = @"C:\_Test\test.wav";
-            recorder.Save();
-            StartCoroutine(SendVoiceRecord(recorder.fileName));
+            //recorder.fileName = @"C:\_Test\test.wav";
+            //recorder.Save();
+            //StartCoroutine(SendVoiceRecord(recorder.fileName));
+            StartCoroutine(SendVoiceRecord(null, recorder.data));
             GetComponentInChildren<Text>().text = "Record";
         }
         else

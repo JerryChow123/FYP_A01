@@ -12,7 +12,7 @@ public class VoiceRecorder : MonoBehaviour
     public Text Infotxt;//提示信息
     public Text Adress;//音频保存地址
     public string fileName;//保存的文件名
-    private byte[] data;
+    public byte[] data;
     private void Start()
     {
         if (Microphone.devices.Length <= 0)
