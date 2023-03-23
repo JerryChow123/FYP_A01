@@ -18,6 +18,8 @@ public class SpeakingButton : MonoBehaviour
 
         if (button != null)
             button.onClick.AddListener(ButtonOnClick);
+
+        Microphone.End(Microphone.devices[0]);
     }
 
     IEnumerator SendVoiceRecord(string wavPath=null, byte[] audio_bytes=null)
@@ -44,7 +46,15 @@ public class SpeakingButton : MonoBehaviour
             Debug.Log("Upload complete!");
             var data = www.downloadHandler.text;
             Debug.Log(data);
-			panel.transform.Find("SayText").GetComponent<Text>().text = data.Replace("Transcript: ", "");
+            var out_text = panel.transform.Find("SayText").GetComponent<Text>().text;
+            out_text = data.Replace("Transcript: ", "");
+            bool bCorrect = (out_text == panel.transform.Find("Text").GetComponent<Text>().text);
+            panel.SetActive(false);
+            var player = GameObject.Find("Player").GetComponent<FirstPersonController>();
+            player.enabled = true;
+            player.CheckAnswerResult(bCorrect);
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

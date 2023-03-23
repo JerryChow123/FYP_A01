@@ -115,7 +115,12 @@ namespace StarterAssets
 			public string answer;
 		}
 
+		public class Dictation { public string text; }
+		public class Sentence { public string text; }
+
 		public static List<Question> all_questions;
+		public static List<Dictation> all_dictations;
+		public static List<Sentence> all_sentences;
 
 		IEnumerator GetQuestions()
 		{
@@ -138,15 +143,34 @@ namespace StarterAssets
 				var data = www.downloadHandler.text;
 				Debug.Log(data);
 				var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-				Debug.Log(resp["success"]);
-				Debug.Log(resp["questions"]);
-				var json = JsonConvert.SerializeObject(resp["questions"]);
-				var questions = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-				foreach (var q in questions)
+				//Debug.Log(resp["success"]);
+				//Debug.Log(resp["questions"]);
+
+				var questions_json = JsonConvert.SerializeObject(resp["questions"]);
+				var questions = JsonConvert.DeserializeObject<Dictionary<string, object>>(questions_json);
+				foreach (var i in questions)
 				{
-					var q_data = JsonConvert.DeserializeObject<Question>(q.Value.ToString());
-					Debug.Log(q_data);
-					all_questions.Add(q_data);
+					var j_data = JsonConvert.DeserializeObject<Question>(i.Value.ToString());
+					Debug.Log(j_data);
+					all_questions.Add(j_data);
+				}
+
+				var dictations_json = JsonConvert.SerializeObject(resp["dictation"]);
+				var dictations = JsonConvert.DeserializeObject<Dictionary<string, object>>(dictations_json);
+				foreach (var i in dictations)
+				{
+					var j_data = JsonConvert.DeserializeObject<Dictation>(i.Value.ToString());
+					Debug.Log(j_data);
+					//all_dictations.Add(j_data);
+				}
+
+				var sentences_json = JsonConvert.SerializeObject(resp["sentence"]);
+				var sentences = JsonConvert.DeserializeObject<Dictionary<string, object>>(sentences_json);
+				foreach (var i in sentences)
+				{
+					var j_data = JsonConvert.DeserializeObject<Sentence>(i.Value.ToString());
+					Debug.Log(j_data);
+					all_sentences.Add(j_data);
 				}
 			}
 		}
@@ -223,6 +247,9 @@ namespace StarterAssets
 
 			// MC問題 data
 			all_questions = new List<Question>();
+			all_sentences = new List<Sentence>();
+			all_dictations = new List<Dictation>();
+
 			StartCoroutine(GetQuestions());
 
 			var doors = GameObject.FindGameObjectsWithTag("TriggerDoor");
@@ -259,6 +286,20 @@ namespace StarterAssets
 			// 人物控制
 			KeyPress_Think();
 		}
+
+		public void CheckAnswerResult(bool bCorrect)
+        {
+			if (bCorrect)
+			{
+				//正確
+				SubTitleRequest.DisplaySubtitle("正確!!", 2f);
+			}
+			else
+            {
+				//錯誤
+				SubTitleResponse.DisplaySubtitle("錯誤!!", 2f);
+            }
+        }
 
 		void KeyPress_Think()
 		{
@@ -316,6 +357,9 @@ namespace StarterAssets
 					Debug.Log("SpeakingPanel not found!");
 					return;
 				}
+				var text_obj = panel.GetComponentInChildren<Text>();
+				int index = new System.Random().Next(all_sentences.Count);
+				text_obj.text = all_sentences[index].text;
 				panel.SetActive(true);
 				Cursor.visible = true;
 				Cursor.lockState = CursorLockMode.None;

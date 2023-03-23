@@ -1,5 +1,5 @@
-const url = 'http://127.0.0.1:5000/';
-//const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+//const url = 'http://127.0.0.1:5000/';
+const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
 
 function setCookie(cname, cvalue, exmins) {
     var d = new Date();
@@ -53,7 +53,7 @@ function dictationtable_delete(elem) {
     let tds = td.parentElement;
     let key = tds.childNodes[0].innerHTML;
     if (confirm(key))
-        delete_data('dictation', 'string', key);
+        delete_data('dictation', 'text', key);
 }
 
 function sentencetable_delete(elem) {
@@ -61,7 +61,7 @@ function sentencetable_delete(elem) {
     let tds = td.parentElement;
     let key = tds.childNodes[0].innerHTML;
     if (confirm(key))
-        delete_data('sentence', 'string', key);
+        delete_data('sentence', 'text', key);
 }
 
 function UserAuth(jump) {
@@ -142,7 +142,7 @@ function UserAuth(jump) {
                 }
                 let dictation_data = {
                     columns: [{
-                        field: 'string',
+                        field: 'text',
                         title: 'Dictation'
                     }],
                     data: dictation
@@ -157,7 +157,7 @@ function UserAuth(jump) {
                 }
                 let sentence_data = {
                     columns: [{
-                        field: 'string',
+                        field: 'text',
                         title: 'Sentence'
                     }],
                     data: sentence
@@ -323,9 +323,9 @@ function OnSubmitDictation() {
         body:   'username='+username+'&'+ 
                 'password='+password+'&'+
                 'table=dictation&'+
-                'key=string&'+
+                'key=text&'+
                 'operation=1&'+
-                'string='+$('#vocabulary').val()
+                'text='+$('#vocabulary').val()
     })
     .then(response => response.json())
     .then(data => {
@@ -369,9 +369,9 @@ function OnSubmitSentence() {
         body:   'username='+username+'&'+ 
                 'password='+password+'&'+
                 'table=sentence&'+
-                'key=string&'+
+                'key=text&'+
                 'operation=1&'+
-                'string='+$('#sentence').val()
+                'text='+$('#sentence').val()
     })
     .then(response => response.json())
     .then(data => {
