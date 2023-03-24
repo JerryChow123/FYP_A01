@@ -151,7 +151,7 @@ namespace StarterAssets
 				foreach (var i in questions)
 				{
 					var j_data = JsonConvert.DeserializeObject<Question>(i.Value.ToString());
-					Debug.Log(j_data);
+					//Debug.Log(j_data);
 					all_questions.Add(j_data);
 				}
 
@@ -160,8 +160,8 @@ namespace StarterAssets
 				foreach (var i in dictations)
 				{
 					var j_data = JsonConvert.DeserializeObject<Dictation>(i.Value.ToString());
-					Debug.Log(j_data);
-					//all_dictations.Add(j_data);
+					//Debug.Log(j_data);
+					all_dictations.Add(j_data);
 				}
 
 				var sentences_json = JsonConvert.SerializeObject(resp["sentence"]);
@@ -169,7 +169,7 @@ namespace StarterAssets
 				foreach (var i in sentences)
 				{
 					var j_data = JsonConvert.DeserializeObject<Sentence>(i.Value.ToString());
-					Debug.Log(j_data);
+					//Debug.Log(j_data);
 					all_sentences.Add(j_data);
 				}
 			}
@@ -185,8 +185,8 @@ namespace StarterAssets
 			form.AddBinaryData("file", audio_bytes, "test", "");
 			form.AddField("username", "teacher");
 			form.AddField("password", "teacher");
-			var url = "http://127.0.0.1:5000/";
-			//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/speech";
+			//var url = "http://127.0.0.1:5000/";
+			var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/dialogflowbot";
 			UnityWebRequest www = UnityWebRequest.Post(url, form);
 			yield return www.SendWebRequest();
 
@@ -212,6 +212,58 @@ namespace StarterAssets
 					audio_player.clip = ConvertBytesToClip(audio);
 					audio_player.Play();
 				}
+			}
+		}
+
+		IEnumerator TextToSpeech(string text)
+		{
+			WWWForm form = new WWWForm();
+			form.AddField("username", "teacher");
+			form.AddField("password", "teacher");
+			form.AddField("text", text);
+			//var url = "http://127.0.0.1:5000/";
+			var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/text_speech";
+			UnityWebRequest www = UnityWebRequest.Post(url, form);
+			yield return www.SendWebRequest();
+
+			if (www.result != UnityWebRequest.Result.Success)
+			{
+				Debug.Log(www.error);
+			}
+			else
+			{
+				Debug.Log("Send POST complete!");
+				var audio = www.downloadHandler.data;
+				var objects = SceneManager.GetSceneByName("DrawBox").GetRootGameObjects();
+				GameObject button = null;
+				foreach (var obj in objects)
+				{
+					//Debug.Log(obj);
+					if (obj.name == "Canvas")
+					{
+						var audio_player = obj.GetComponentInChildren<AudioSource>();
+						audio_player.clip = ConvertBytesToClip(audio);
+						button = obj.transform.Find("ListenButton").gameObject;
+						break;
+					}
+				}
+
+				Scene s = SceneManager.GetSceneByName("EscapeGame");
+				GameObject[] objs = s.GetRootGameObjects();
+				foreach (GameObject obj in objs)
+					obj.SetActive(false);
+
+				s = SceneManager.GetSceneByName("DrawBox");
+				objs = s.GetRootGameObjects();
+				foreach (GameObject obj in objs)
+					obj.SetActive(true);
+
+				Cursor.visible = true;
+				Cursor.lockState = CursorLockMode.None;
+				this.enabled = false;
+				Debug.Log(button);
+				if (button != null)
+					DrawBox.text = text;
 			}
 		}
 
@@ -326,19 +378,8 @@ namespace StarterAssets
 
 			if (Input.GetKeyDown(KeyCode.G))
 			{
-				Scene s = SceneManager.GetSceneByName("EscapeGame");
-				GameObject[] objs = s.GetRootGameObjects();
-				foreach (GameObject obj in objs)
-					obj.SetActive(false);
-
-				s = SceneManager.GetSceneByName("DrawBox");
-				objs = s.GetRootGameObjects();
-				foreach (GameObject obj in objs)
-					obj.SetActive(true);
-
-				Cursor.visible = true;
-				Cursor.lockState = CursorLockMode.None;
-				this.enabled = false;
+				int index = new System.Random().Next(all_dictations.Count);
+				StartCoroutine(TextToSpeech(all_dictations[index].text));
 			}
 			else if (Input.GetKeyDown(KeyCode.R))
 			{

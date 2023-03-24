@@ -19,6 +19,7 @@ public class DrawBox : MonoBehaviour
 
 	Button button;
 	GameObject panel;
+	public static string text;
 
 	private void Start()
 	{
@@ -29,11 +30,18 @@ public class DrawBox : MonoBehaviour
 			button.onClick.AddListener(ButtonOnClick);
 	}
 
-	IEnumerator SendPng(string pngPath)
+	IEnumerator SendPng(string pngPath, byte[] byteData=null)
 	{
 		WWWForm form = new WWWForm();
-		byte[] myData = System.IO.File.ReadAllBytes(pngPath);
-		form.AddBinaryData("file", myData, "test", "");
+		if (byteData != null)
+		{
+			form.AddBinaryData("file", byteData, "test", "");
+		}
+		else
+		{
+			byte[] myData = System.IO.File.ReadAllBytes(pngPath);
+			form.AddBinaryData("file", myData, "test", "");
+		}
 		//var url = "http://192.168.0.135:5000/";
 		var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/visionai";
 		UnityWebRequest www = UnityWebRequest.Post(url, form);
@@ -47,7 +55,13 @@ public class DrawBox : MonoBehaviour
 		{
 			Debug.Log("Upload complete!");
 			var data = www.downloadHandler.text;
-			Debug.Log(data);
+			var start = data.IndexOf('\"');
+			var end = data.IndexOf('\"', start + 1);
+			//var result = (data == null) ? data : data.Split('b')[0].Replace("\"", "").Trim();
+			//Debug.Log(start + " to " + end);
+			var result = data.Substring(start + 1, end - start - 1);
+			Debug.Log(result);
+			Debug.Log("Correct : " + text);
 			//panel.transform.Find("SayText").GetComponent<Text>().text = data.Replace("Transcript: ", "");
 
 			// ªð¦^
@@ -64,9 +78,13 @@ public class DrawBox : MonoBehaviour
 					obj.SetActive(true);
 			}
 
-			GameObject.Find("Player").GetComponent<FirstPersonController>().enabled = true;
+			var player = GameObject.Find("Player").GetComponent<FirstPersonController>();
+			player.enabled = true;
 			Cursor.visible = false;
 			Cursor.lockState = CursorLockMode.Locked;
+			
+			bool bCorrect = (result == text);
+			player.CheckAnswerResult(bCorrect);
 		}
 	}
 
@@ -84,13 +102,14 @@ public class DrawBox : MonoBehaviour
 				Texture2D photo = draw.GetComponentsInParent<SpriteRenderer>()[0].sprite.texture;
 				//Debug.Log(photo);
 				byte[] bytes = photo.EncodeToPNG();
-				var path = @"C:\_Test\test.png";
-				File.WriteAllBytes(path, bytes);
-				StartCoroutine(SendPng(path));
+				//var path = @"C:\_Test\test.png";
+				//File.WriteAllBytes(path, bytes);
+				StartCoroutine(SendPng(null, bytes));
 
 				break;
 
 			case btn_listen:
+				GetComponent<AudioSource>().Play();
 				break;
 		}
 	}
