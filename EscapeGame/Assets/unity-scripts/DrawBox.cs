@@ -55,11 +55,17 @@ public class DrawBox : MonoBehaviour
 		{
 			Debug.Log("Upload complete!");
 			var data = www.downloadHandler.text;
-			var start = data.IndexOf('\"');
-			var end = data.IndexOf('\"', start + 1);
-			//var result = (data == null) ? data : data.Split('b')[0].Replace("\"", "").Trim();
-			//Debug.Log(start + " to " + end);
-			var result = data.Substring(start + 1, end - start - 1);
+			var result = "";
+			if (data.Length > 0)
+			{
+				var start = data.IndexOf('\"');
+				var end = data.IndexOf('\"', start + 1);
+				//var result = (data == null) ? data : data.Split('b')[0].Replace("\"", "").Trim();
+				//Debug.Log(start + " to " + end);
+				result = data.Substring(start + 1, end - start - 1);
+			}
+			else
+				result = "";
 			Debug.Log(result);
 			Debug.Log("Correct : " + text);
 			//panel.transform.Find("SayText").GetComponent<Text>().text = data.Replace("Transcript: ", "");
