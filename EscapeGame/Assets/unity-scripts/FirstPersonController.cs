@@ -122,62 +122,44 @@ namespace StarterAssets
 		public static List<Dictation> all_dictations;
 		public static List<Sentence> all_sentences;
 
-		IEnumerator GetQuestions()
-		{
-			WWWForm form = new WWWForm();
-			form.AddField("username", "teacher");
-			form.AddField("password", "teacher");
-
-			//var url = "http://192.168.0.135:5000/";
-			var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game/";
-			UnityWebRequest www = UnityWebRequest.Post(url, form);
-			//www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-			yield return www.SendWebRequest();
-
-			if (www.result != UnityWebRequest.Result.Success)
-			{
-				Debug.Log(www.error);
-			}
-			else
-			{
-				var data = www.downloadHandler.text;
-				Debug.Log(data);
-				var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-				//Debug.Log(resp["success"]);
-				//Debug.Log(resp["questions"]);
-
-				var questions_json = JsonConvert.SerializeObject(resp["questions"]);
-				var questions = JsonConvert.DeserializeObject<Dictionary<string, object>>(questions_json);
-				foreach (var i in questions)
-				{
-					var j_data = JsonConvert.DeserializeObject<Question>(i.Value.ToString());
-					//Debug.Log(j_data);
-					all_questions.Add(j_data);
-				}
-
-				var dictations_json = JsonConvert.SerializeObject(resp["dictation"]);
-				var dictations = JsonConvert.DeserializeObject<Dictionary<string, object>>(dictations_json);
-				foreach (var i in dictations)
-				{
-					var j_data = JsonConvert.DeserializeObject<Dictation>(i.Value.ToString());
-					//Debug.Log(j_data);
-					all_dictations.Add(j_data);
-				}
-
-				var sentences_json = JsonConvert.SerializeObject(resp["sentence"]);
-				var sentences = JsonConvert.DeserializeObject<Dictionary<string, object>>(sentences_json);
-				foreach (var i in sentences)
-				{
-					var j_data = JsonConvert.DeserializeObject<Sentence>(i.Value.ToString());
-					//Debug.Log(j_data);
-					all_sentences.Add(j_data);
-				}
-			}
-		}
+		public static string username, password;
 
 		SubtitleManager SubTitleRequest, SubTitleResponse;
 		VoiceRecorder recorder;
 		float recorder_nexttime;
+
+		public static void AddData()
+		{
+			var data = LoginPage.data;
+			var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+
+			var questions_json = JsonConvert.SerializeObject(resp["questions"]);
+			var questions = JsonConvert.DeserializeObject<Dictionary<string, object>>(questions_json);
+			foreach (var i in questions)
+			{
+				var j_data = JsonConvert.DeserializeObject<Question>(i.Value.ToString());
+				//Debug.Log(j_data);
+				all_questions.Add(j_data);
+			}
+
+			var dictations_json = JsonConvert.SerializeObject(resp["dictation"]);
+			var dictations = JsonConvert.DeserializeObject<Dictionary<string, object>>(dictations_json);
+			foreach (var i in dictations)
+			{
+				var j_data = JsonConvert.DeserializeObject<Dictation>(i.Value.ToString());
+				//Debug.Log(j_data);
+				all_dictations.Add(j_data);
+			}
+
+			var sentences_json = JsonConvert.SerializeObject(resp["sentence"]);
+			var sentences = JsonConvert.DeserializeObject<Dictionary<string, object>>(sentences_json);
+			foreach (var i in sentences)
+			{
+				var j_data = JsonConvert.DeserializeObject<Sentence>(i.Value.ToString());
+				//Debug.Log(j_data);
+				all_sentences.Add(j_data);
+			}
+		}
 
 		IEnumerator AccessDialogflow(byte[] audio_bytes)
 		{
@@ -301,8 +283,7 @@ namespace StarterAssets
 			all_questions = new List<Question>();
 			all_sentences = new List<Sentence>();
 			all_dictations = new List<Dictation>();
-
-			StartCoroutine(GetQuestions());
+			AddData();
 
 			var doors = GameObject.FindGameObjectsWithTag("TriggerDoor");
 			foreach (var door in doors)

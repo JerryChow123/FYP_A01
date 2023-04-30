@@ -62,6 +62,7 @@
     <Compile Include="Assets\unity-scripts\SubtitleManager.cs" />
     <Compile Include="Assets\AssetsPack\FreeDraw\Scripts\Drawable.cs" />
     <Compile Include="Assets\AssetsPack\Mryotaisu\Scripts\MuryotaisuDoorOpen.cs" />
+    <Compile Include="Assets\LoginPage.cs" />
     <Compile Include="Assets\unity-scripts\FirstPersonController.cs" />
     <Compile Include="Assets\unity-scripts\AnswerButton.cs" />
     <Compile Include="Assets\AssetsPack\StarterAssets\Mobile\Scripts\CanvasInputs\UICanvasControllerInput.cs" />
