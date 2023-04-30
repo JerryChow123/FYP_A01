@@ -28,6 +28,7 @@ def config_terraform(filename, folder, projectid):
 projectid = os.environ['DEVSHELL_PROJECT_ID']
 config_provider(projectid, region, zone)
 projectid = "qwheb128376123"
+os.system('mkdir first second third')
 config_terraform('firebase.tf', 'first/', projectid)
 config_terraform('dialogflow.tf', 'first/', projectid)
 config_terraform('cloudfunction.tf', 'second/', projectid)
