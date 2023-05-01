@@ -19,6 +19,12 @@ function getCookie(cname) {
 }
 
 function ShowTables() {
+    $('#questionform').show();
+    $('#leaderboardform').show();
+    $('#dictationform').show();
+    $('#sentenceform').show();
+    $('#accountform').show();
+
     $('#question_table').show();
     $('#mark_table').show();
     $('#dictation_table').show();
@@ -64,14 +70,23 @@ function sentencetable_delete(elem) {
         delete_data('sentence', 'text', key);
 }
 
-function UserAuth(jump) {
+function accounttable_delete(elem) {
+    let td = elem.parentElement;
+    let tds = td.parentElement;
+    let key = tds.childNodes[0].innerHTML;
+    if (confirm(key))
+        delete_data('account', 'username', key);
+}
+
+function UserAuth(jump=false, role=0) {
     let username = getCookie('username');
     let password = getCookie('password');
     fetch(url, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
         body:   'username='+username +'&'+ 
-                'password='+password
+                'password='+password +'&'+ 
+                'role='+role
     })
     .then(response => response.json())
     .then(data => {
@@ -165,12 +180,38 @@ function UserAuth(jump) {
                 $('#sentence_table').bootstrapTable(sentence_data);
             }
 
+            if (data['accounts'] != null) {
+                let accounts = [];
+                for (let i in data['accounts']) {
+                    accounts.push(data['accounts'][i])
+                }
+                let accounts_data = {
+                    columns: [{
+                        field: 'username',
+                        title: 'Username'
+                    }, {
+                        field: 'password',
+                        title: 'Password'
+                    }],
+                    data: accounts
+                };
+                $('#account_table').bootstrapTable(accounts_data);
+            }
+
             $('#question_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="questiontable_delete(this)">Delete </button></td>');
             $('#mark_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="marktable_delete(this)">Delete </button></td>');
             $('#dictation_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="dictationtable_delete(this)">Delete </button></td>');
             $('#sentence_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="sentencetable_delete(this)">Delete </button></td>');
+            $('#account_table tbody tr').append('<td style="width: 1%"><button class="btn btn-danger" onclick="accounttable_delete(this)">Delete </button></td>');
 
         } else {
+            if (role >= 1)
+            {
+                alert('You have not permission!');
+                location.href = 'index.html';
+                return;
+            }
+
             $('#username').val('');
             $('#password').val('');
             $('#loginform').show();
@@ -397,9 +438,58 @@ function OnSubmitSentence() {
     return false;
 }
 
-function SignedRefresh() {
+function OnSubmitAccount() {
+    if (!$('form')[0].checkValidity())
+        return false;
+
+    let username = getCookie('username');
+    let password = getCookie('password');
+
+    str =       'Account: ' + $('#username').val() + '\n' +
+                'Role: ' + $('#userrole option:selected').text();
+
+    if (!confirm(str))
+        return false;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+        body:   'username='+username+'&'+ 
+                'password='+password+'&'+
+                'table=account&'+
+                'key=username&'+
+                'operation=1&'+
+                'add_username='+$('#username').val()+'&'+
+                'add_password='+$('#password').val()+'&'+
+                'userrole='+$('#userrole').val()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data['success'] == true) {
+            if (data['inserted'] == true) {
+                alert(data['message']);
+                location.reload();
+            }
+            else {
+                $('errorbox').html(data['message']);
+                $('errorbox').show();
+            }
+        } else {
+            $('#errorbox').html('wrong username or password');
+            $('#errorbox').show();
+        }
+    })
+    .catch(err => {
+        $('#errorbox').html('connection failed');
+        $('#errorbox').show();
+    });
+
+    return false;
+}
+
+function SignedRefresh(role=0) {
     if (getCookie('username') != '') {
-        UserAuth(true);
+        UserAuth(true, role);
     }
     else {
         alert('You must log-in first!');

@@ -54,7 +54,7 @@
       }
       </style>
   </head>
-  <body onload="SignedRefresh();">
+  <body onload="SignedRefresh(1);">
     <audio autoplay="autoplay" loop="loop" preload="auto"
             src="tt.mp3">
 </audio>
@@ -95,6 +95,7 @@ n:0	//指定起始的數字
         <a href="Vocabulary.html"><li>Enter Vocabulary</li></a>
         <a href="Complete_Sentence.html"><li>Enter Complete Sentence</li></a>
         <a href="leaderboard.html"><li>Leaderboard</li></a>
+        <a href="account.html"><li>User Management</li></a>
     </ul>
   </div>
 </nav>
@@ -113,7 +114,7 @@ n:0	//指定起始的數字
       <div class="row">
         <div class="col">
           <!-- Section: Design Block -->
-          <section id="questionform" class=" text-center text-lg-start">
+          <section id="questionform" style="display: none;" class=" text-center text-lg-start">
             <style>
               .rounded-t-5 {
                 border-top-left-radius: 0.5rem;
@@ -138,7 +139,7 @@ n:0	//指定起始的數字
                 </div>
                 <div class="col-lg-8">
                   <div class="card-body py-5 px-md-5">
-                    <form onsubmit="return OnSubmitQuestions();" method="post" target="output" action="http://127.0.0.1:5000" a="https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game">
+                    <form onsubmit="return OnSubmitQuestions();" method="post" target="output">
                       <!-- Email input -->
                       <div class="form-outline mb-4">
                         <label class="form-label" for="form2Example1">Question</label>
