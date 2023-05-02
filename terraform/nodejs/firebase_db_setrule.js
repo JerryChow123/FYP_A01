@@ -25,21 +25,5 @@ const source = `{
 var db = admin.database();
 db.setRules(source)
 .then(e => {
-    var account = db.ref("/account/");
-    account.get()
-    .then(snapshot => {
-        data = snapshot.val();
-        for (let record in data) {
-            if (data[record]['username'] === 'root') 
-                process.exit();
-        }
-        account.push({
-            'username': 'root',
-            'password': 'root'
-        })
-        .then(e => {
-            console.log("User 'root' created (password: root)");
-            process.exit();
-        });
-    });
+    process.exit();
 });

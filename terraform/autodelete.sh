@@ -1,7 +1,8 @@
 #!/bin/bash
+rm ../configure.ini
 cd third
-terraform destroy
+terraform destroy -auto-approve
 cd ../second
-terraform destroy
+terraform destroy -auto-approve
 cd ../first
-terraform destroy
+terraform destroy -auto-approve

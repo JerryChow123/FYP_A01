@@ -17,7 +17,7 @@ resource "google_storage_bucket_iam_member" "allusers" {
 
 variable "website_path" {
     type = string
-    default = "../../static-website"
+    default = "../../static-web"
 }
 
 locals {
