@@ -21,15 +21,19 @@ public class AnswerButton : MonoBehaviour
 	{
         var option = button.GetComponentInChildren<Text>().text;
         //Debug.Log("[OnClick] " + option);
-
-        if (option == AnswerButton.answer)
+        var correct = (option == AnswerButton.answer);
+        if (correct)
         {
             //Debug.Log(door);
             Animator anim = AnswerButton.door.transform.parent.GetComponent<Animator>();
+            if (anim == null)
+                anim = AnswerButton.door.transform.GetComponent<Animator>();
             anim.SetBool("opened", true);
         }
 
-        GameObject.Find("Player").GetComponent<FirstPersonController>().enabled = true;
+        var player = GameObject.Find("Player").GetComponent<FirstPersonController>();
+        player.enabled = true;
+        player.CheckAnswerResult(correct);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         transform.parent.gameObject.SetActive(false);

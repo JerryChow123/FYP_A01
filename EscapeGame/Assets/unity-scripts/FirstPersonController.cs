@@ -102,7 +102,7 @@ namespace StarterAssets
 			{
 				_mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 			}
-			SceneManager.LoadSceneAsync("DrawBox", LoadSceneMode.Additive);
+			//SceneManager.LoadSceneAsync("DrawBox", LoadSceneMode.Additive);
 		}
 
 		public class Question
@@ -127,10 +127,21 @@ namespace StarterAssets
 		SubtitleManager SubTitleRequest, SubTitleResponse;
 		VoiceRecorder recorder;
 		float recorder_nexttime;
+		Animator current_box_anim;
 
 		public static void AddData()
 		{
-			var data = LoginPage.data;
+			string data;
+			try
+			{
+				data = LoginPage.data;
+			}
+			catch (Exception) 
+			{
+				data = null;
+			}
+			if (data == null)
+				data = "{\"dictation\":{\"-NUAsF_fQkZM-5vpW1v2\":{\"text\":\"agenda\"},\"-NUAsIP3INaTnSJKpkT5\":{\"text\":\"acknowledge\"},\"-NUAsL1rWuA04p_NOEj6\":{\"text\":\"bonus\"},\"-NUAsMi1q1Zd546AIxdr\":{\"text\":\"browse\"},\"-NUAsOZMjZk8bYBguJPJ\":{\"text\":\"chairman\"},\"-NUAsQv5edg-Azlj_pCf\":{\"text\":\"despair\"},\"-NUAsTEAW3B02idjCrir\":{\"text\":\"destination\"},\"-NUAsVD-7mLT58mF2n9M\":{\"text\":\"execute\"},\"-NUAsXZtodWHWqQNURGR\":{\"text\":\"external\"},\"-NUAsZjZfDZ6XHK1aVVm\":{\"text\":\"insure\"}},\"marks\":null,\"questions\":{\"-NSymGqdmaG6xbHPQWM6\":{\"answer\":\"2\",\"optionA\":\"1\",\"optionB\":\"2\",\"optionC\":\"3\",\"optionD\":\"4\",\"question\":\"1 add 1 is ?\"},\"-NUI46rthdxZzxUaIvKh\":{\"answer\":\"4\",\"optionA\":\"4\",\"optionB\":\"6\",\"optionC\":\"8\",\"optionD\":\"5\",\"question\":\"2 Multiplication 2 is ?\"},\"-NUI6Ch-ocHiOL5jBAdq\":{\"answer\":\"9\",\"optionA\":\"6\",\"optionB\":\"3\",\"optionC\":\"8\",\"optionD\":\"9\",\"question\":\"3 Division 3 is ?\"},\"-NUIJBxkbqshfkOJw6sx\":{\"answer\":\"-1\",\"optionA\":\"4\",\"optionB\":\"5\",\"optionC\":\"1\",\"optionD\":\"-1\",\"question\":\"4 Subtraction 5 is ?\"}},\"sentence\":{\"-NUAsdZw9s85OQxkao7_\":{\"text\":\"Action speak louder than words.\"},\"-NUAsfIBBBCXpGWdsGhO\":{\"text\":\"Wasting time is robbing oneself.\"},\"-NUAsgozhuzDNEZMFzMP\":{\"text\":\"Never say die.\"},\"-NUAsirdFDJCfrR5MeI8\":{\"text\":\"Keep on going never give up.\"},\"-NUAskeWS3j1W1l0adhb\":{\"text\":\"Never put off what you can do today until tomorrow.\"},\"-NUAspIyBMLiMBj7B_ih\":{\"text\":\"Believe in yourself.\"},\"-NUAsqssZOL-NK2mBLPI\":{\"text\":\"You think you can, you can.\"},\"-NUAssR8A_iO9rgc8ZJr\":{\"text\":\"I can because i think i can.\"},\"-NUAsttsxaKEJHW7fLoA\":{\"text\":\"Winners do what losers don't want to do.\"},\"-NUAswQTZRiiHizT-tSI\":{\"text\":\"Jack of all trades and master of none.\"}},\"success\":true}";
 			var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
 
 			var questions_json = JsonConvert.SerializeObject(resp["questions"]);
@@ -168,7 +179,8 @@ namespace StarterAssets
 			form.AddField("username", "teacher");
 			form.AddField("password", "teacher");
 			//var url = "http://127.0.0.1:5000/";
-			var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/dialogflowbot";
+			//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/dialogflowbot";
+			var url = LoginPage.DIALOGFLOW_URL;
 			UnityWebRequest www = UnityWebRequest.Post(url, form);
 			yield return www.SendWebRequest();
 
@@ -204,7 +216,8 @@ namespace StarterAssets
 			form.AddField("password", "teacher");
 			form.AddField("text", text);
 			//var url = "http://127.0.0.1:5000/";
-			var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/text_speech";
+			//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/text_speech";
+			var url = LoginPage.TEXT_SPEECH_URL;
 			UnityWebRequest www = UnityWebRequest.Post(url, form);
 			yield return www.SendWebRequest();
 
@@ -238,7 +251,11 @@ namespace StarterAssets
 				s = SceneManager.GetSceneByName("DrawBox");
 				objs = s.GetRootGameObjects();
 				foreach (GameObject obj in objs)
+				{
 					obj.SetActive(true);
+					if (obj.name == "Canvas")
+						obj.GetComponentInChildren<DrawBox>().ResetCanvas();
+				}
 
 				Cursor.visible = true;
 				Cursor.lockState = CursorLockMode.None;
@@ -283,7 +300,14 @@ namespace StarterAssets
 			all_questions = new List<Question>();
 			all_sentences = new List<Sentence>();
 			all_dictations = new List<Dictation>();
-			AddData();
+			try
+			{
+				AddData();
+			}
+			catch (Exception e)
+			{
+				Debug.Log(e);
+			}
 
 			var doors = GameObject.FindGameObjectsWithTag("TriggerDoor");
 			foreach (var door in doors)
@@ -320,17 +344,20 @@ namespace StarterAssets
 			KeyPress_Think();
 		}
 
-		public void CheckAnswerResult(bool bCorrect)
+		public void CheckAnswerResult(bool bCorrect, string result=null)
         {
 			if (bCorrect)
 			{
 				//正確
 				SubTitleRequest.DisplaySubtitle("正確!!", 2f);
+				current_box_anim?.SetBool("opened", true);
 			}
 			else
             {
 				//錯誤
 				SubTitleResponse.DisplaySubtitle("錯誤!!", 2f);
+				if (result != null)
+					SubTitleRequest.DisplaySubtitle(result, 2f);
             }
         }
 
@@ -357,37 +384,7 @@ namespace StarterAssets
 				}
 			}
 
-			if (Input.GetKeyDown(KeyCode.G))
-			{
-				int index = new System.Random().Next(all_dictations.Count);
-				StartCoroutine(TextToSpeech(all_dictations[index].text));
-			}
-			else if (Input.GetKeyDown(KeyCode.R))
-			{
-				Canvas[] panels = Resources.FindObjectsOfTypeAll<Canvas>();
-				GameObject panel = null;
-				foreach (Canvas p in panels)
-				{
-					if (p.name == "SpeakingPanel")
-					{
-						panel = p.gameObject;
-						break;
-					}
-				}
-				if (panel == null)
-				{
-					Debug.Log("SpeakingPanel not found!");
-					return;
-				}
-				var text_obj = panel.GetComponentInChildren<Text>();
-				int index = new System.Random().Next(all_sentences.Count);
-				text_obj.text = all_sentences[index].text;
-				panel.SetActive(true);
-				Cursor.visible = true;
-				Cursor.lockState = CursorLockMode.None;
-				this.enabled = false;
-			}
-			else if (Input.GetKeyDown(KeyCode.E))
+			if (Input.GetKeyDown(KeyCode.E))
 			{
 				Debug.Log("按鍵 E");
 
@@ -400,61 +397,107 @@ namespace StarterAssets
 
 				if (Physics.Raycast(ray, out hit, 2.5f, layerMask))
 				{
-					if (hit.transform.tag == "TriggerDoor")
+					if (hit.transform.tag == "TriggerDoor" || hit.transform.tag == "TriggerBox")
 					{
 						Debug.Log("觸發門 " + hit.collider.name);
-						Animator anim = hit.collider.gameObject.transform.parent.GetComponent<Animator>();
+						Animator anim;
+
+						if (hit.transform.tag == "TriggerDoor")
+							anim = hit.collider.gameObject.transform.parent.GetComponent<Animator>();
+						else
+							anim = hit.collider.gameObject.transform.GetComponent<Animator>();
 
 						if (!anim.GetBool("opened"))
 						{
-							Canvas[] panels = Resources.FindObjectsOfTypeAll<Canvas>();
-							GameObject panel = null;
-							foreach (Canvas p in panels)
+							var random = UnityEngine.Random.Range(0, 3);
+
+							if (random == 0 && all_questions.Count > 0)
 							{
-								if (p.name == "AnswerPanel")
+								Canvas[] panels = Resources.FindObjectsOfTypeAll<Canvas>();
+								GameObject panel = null;
+								foreach (Canvas p in panels)
 								{
-									panel = p.gameObject;
-									break;
+									if (p.name == "AnswerPanel")
+									{
+										panel = p.gameObject;
+										break;
+									}
 								}
-							}
-							if (panel == null)
-							{
-								Debug.Log("AnswerPanel not found!");
-								return;
-							}
-							panel.SetActive(true);
-							var buttons = panel.GetComponentsInChildren<AnswerButton>();
-							int index = new System.Random().Next(all_questions.Count);
-							foreach (AnswerButton button in buttons)
-							{
-								//Debug.Log(button.GetComponentInChildren<Text>().text);
-								//Debug.Log(button.transform.gameObject.name);
-								switch (button.transform.gameObject.name)
+								if (panel == null)
 								{
-									case "ButtonA":
-										button.GetComponentInChildren<Text>().text = all_questions[index].optionA;
-										break;
-
-									case "ButtonB":
-										button.GetComponentInChildren<Text>().text = all_questions[index].optionB;
-										break;
-
-									case "ButtonC":
-										button.GetComponentInChildren<Text>().text = all_questions[index].optionC;
-										break;
-
-									case "ButtonD":
-										button.GetComponentInChildren<Text>().text = all_questions[index].optionD;
-										break;
+									Debug.Log("AnswerPanel not found!");
+									return;
 								}
+								panel.SetActive(true);
+								var buttons = panel.GetComponentsInChildren<AnswerButton>();
+								int index = new System.Random().Next(all_questions.Count);
+								foreach (AnswerButton button in buttons)
+								{
+									//Debug.Log(button.GetComponentInChildren<Text>().text);
+									//Debug.Log(button.transform.gameObject.name);
+									switch (button.transform.gameObject.name)
+									{
+										case "ButtonA":
+											button.GetComponentInChildren<Text>().text = all_questions[index].optionA;
+											break;
+
+										case "ButtonB":
+											button.GetComponentInChildren<Text>().text = all_questions[index].optionB;
+											break;
+
+										case "ButtonC":
+											button.GetComponentInChildren<Text>().text = all_questions[index].optionC;
+											break;
+
+										case "ButtonD":
+											button.GetComponentInChildren<Text>().text = all_questions[index].optionD;
+											break;
+									}
+								}
+								panel.transform.Find("Text").GetComponent<Text>().text = all_questions[index].question;
+								AnswerButton.answer = all_questions[index].answer;
+								//Debug.Log("[Answer] " + AnswerButton.answer);
+								AnswerButton.door = hit.collider.gameObject;
+								Cursor.visible = true;
+								Cursor.lockState = CursorLockMode.None;
+								this.enabled = false;
 							}
-							panel.transform.Find("Text").GetComponent<Text>().text = all_questions[index].question;
-							AnswerButton.answer = all_questions[index].answer;
-							//Debug.Log("[Answer] " + AnswerButton.answer);
-							AnswerButton.door = hit.collider.gameObject;
-							Cursor.visible = true;
-							Cursor.lockState = CursorLockMode.None;
-							this.enabled = false;
+							else if (random == 1)
+							{
+								current_box_anim = hit.collider.gameObject.GetComponent<Animator>();
+								if (current_box_anim == null)
+									current_box_anim = hit.collider.gameObject.GetComponentInParent<Animator>();
+								int index = new System.Random().Next(all_dictations.Count);
+								StartCoroutine(TextToSpeech(all_dictations[index].text));
+							}
+							else if (random == 2)
+							{
+								current_box_anim = hit.collider.gameObject.GetComponent<Animator>();
+								if (current_box_anim == null)
+									current_box_anim = hit.collider.gameObject.GetComponentInParent<Animator>();
+								Canvas[] panels = Resources.FindObjectsOfTypeAll<Canvas>();
+								GameObject panel = null;
+								foreach (Canvas p in panels)
+								{
+									if (p.name == "SpeakingPanel")
+									{
+										panel = p.gameObject;
+										break;
+									}
+								}
+								if (panel == null)
+								{
+									Debug.Log("SpeakingPanel not found!");
+									return;
+								}
+								var text_obj = panel.GetComponentInChildren<Text>();
+								int index = new System.Random().Next(all_sentences.Count);
+								text_obj.text = all_sentences[index].text;
+								panel.SetActive(true);
+								Cursor.visible = true;
+								Cursor.lockState = CursorLockMode.None;
+								this.enabled = false;
+							}
 						}
 						else
 							anim.SetBool("opened", !anim.GetBool("opened"));

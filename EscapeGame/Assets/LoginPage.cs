@@ -3,6 +3,7 @@ using StarterAssets;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -16,11 +17,69 @@ public class LoginPage : MonoBehaviour
 	public static string data;
 	public static string ac;
 	public static string pw;
-	
+	public static string REQUEST_URL, SPEECH_TEXT_URL, TEXT_SPEECH_URL, VISIONAI_URL, DIALOGFLOW_URL;
+
+	bool LoadConfigFile()
+	{
+		var path = Directory.GetCurrentDirectory();
+		Debug.Log(path);
+		string[] lines;
+		try
+		{
+			lines = File.ReadAllLines("configure.ini");
+			foreach (var line in lines)
+			{
+				var function = line.Split('=')[0];
+				data = line.Split('=')[1];
+				Debug.Log(data);
+				switch (function)
+				{
+					case "REQUEST":
+						LoginPage.REQUEST_URL = data;
+						break;
+					case "SPEECH_TEXT":
+						LoginPage.SPEECH_TEXT_URL = data;
+						break;
+					case "TEXT_SPEECH":
+						LoginPage.TEXT_SPEECH_URL = data;
+						break;
+					case "VISIONAI":
+						LoginPage.VISIONAI_URL = data;
+						break;
+					case "DIALOGFLOW":
+						LoginPage.DIALOGFLOW_URL = data;
+						break;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Debug.Log(e);
+			return false;
+		}
+
+		return true;
+	}
+
+	private void Awake()
+	{
+		SceneManager.LoadSceneAsync("EscapeGame", LoadSceneMode.Additive);
+		SceneManager.LoadSceneAsync("DrawBox", LoadSceneMode.Additive);
+	}
+
 	// Start is called before the first frame update
 	void Start()
     {
-        login = GetComponentInChildren<Button>();
+		if (!LoadConfigFile())
+		{
+		#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+		#else
+			Application.Quit();
+		#endif
+		}
+
+		login = GetComponentInChildren<Button>();
         login.onClick.AddListener(OnClickLogin);
 
         username = transform.Find("username").GetComponent<InputField>();
@@ -44,9 +103,12 @@ public class LoginPage : MonoBehaviour
 		WWWForm form = new WWWForm();
 		form.AddField("username", username.text);
 		form.AddField("password", password.text);
+		form.AddField("game", "1");
 
 		//var url = "http://192.168.0.135:5000/";
-		var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game/";
+		//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game/";
+		var url = LoginPage.REQUEST_URL;
+		Debug.Log(">>>>>>>>>>>>>>>" + url);
 		UnityWebRequest www = UnityWebRequest.Post(url, form);
 		//www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		yield return www.SendWebRequest();

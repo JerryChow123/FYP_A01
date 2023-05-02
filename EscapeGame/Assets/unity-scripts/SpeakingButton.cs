@@ -1,4 +1,5 @@
 using StarterAssets;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,7 +34,8 @@ public class SpeakingButton : MonoBehaviour
         else
             form.AddBinaryData("file", audio_bytes, "test", "");
         //var url = "http://192.168.0.135:5000/";
-        var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/speech";
+        //var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/speech";
+        var url = LoginPage.SPEECH_TEXT_URL;
         UnityWebRequest www = UnityWebRequest.Post(url, form);
         yield return www.SendWebRequest();
 
@@ -45,14 +47,19 @@ public class SpeakingButton : MonoBehaviour
         {
             Debug.Log("Upload complete!");
             var data = www.downloadHandler.text;
-            Debug.Log(data);
+            //Debug.Log(data);
             var out_text = panel.transform.Find("SayText").GetComponent<Text>().text;
-            out_text = data.Replace("Transcript: ", "");
-            bool bCorrect = (out_text == panel.transform.Find("Text").GetComponent<Text>().text);
+            out_text = data.Replace("Transcript: ", "").Trim();
+            var answer = panel.transform.Find("Text").GetComponent<Text>().text.Trim();
+            string[] filter = { ".", ",", "\'", "\"" };
+            foreach (var c in filter)
+                answer = answer.Replace(c, "");
+            //Debug.Log(out_text + " -> " + answer);
+            bool bCorrect = (answer.ToLower() == out_text.ToLower());
             panel.SetActive(false);
             var player = GameObject.Find("Player").GetComponent<FirstPersonController>();
             player.enabled = true;
-            player.CheckAnswerResult(bCorrect);
+            player.CheckAnswerResult(bCorrect, bCorrect ? null : out_text);
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }

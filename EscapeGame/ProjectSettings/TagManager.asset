@@ -8,6 +8,7 @@ TagManager:
   - TriggerDoor
   - GamePanel
   - floor
+  - TriggerBox
   layers:
   - Default
   - TransparentFX

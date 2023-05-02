@@ -30,6 +30,12 @@ public class DrawBox : MonoBehaviour
 			button.onClick.AddListener(ButtonOnClick);
 	}
 
+	public void ResetCanvas() 
+	{ 
+		if (panel != null)
+			panel.GetComponent<Drawable>().ResetCanvas();
+	}
+
 	IEnumerator SendPng(string pngPath, byte[] byteData=null)
 	{
 		WWWForm form = new WWWForm();
@@ -43,7 +49,8 @@ public class DrawBox : MonoBehaviour
 			form.AddBinaryData("file", myData, "test", "");
 		}
 		//var url = "http://192.168.0.135:5000/";
-		var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/visionai";
+		//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/visionai";
+		var url = LoginPage.VISIONAI_URL;
 		UnityWebRequest www = UnityWebRequest.Post(url, form);
 		yield return www.SendWebRequest();
 
@@ -90,7 +97,7 @@ public class DrawBox : MonoBehaviour
 			Cursor.lockState = CursorLockMode.Locked;
 			
 			bool bCorrect = (result == text);
-			player.CheckAnswerResult(bCorrect);
+			player.CheckAnswerResult(bCorrect, bCorrect ? null : result);
 		}
 	}
 
