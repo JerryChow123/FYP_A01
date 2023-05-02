@@ -1,5 +1,6 @@
 //const url = 'http://127.0.0.1:5000/';
-const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+//const url = 'https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game';
+const url = '<FUNCTION_AUTH>'
 
 function setCookie(cname, cvalue, exmins) {
     var d = new Date();

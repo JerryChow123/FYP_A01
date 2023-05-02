@@ -96,12 +96,13 @@ def speech_to_text(request):
 
     filename = 'speech_to_text/' + str(datetime.datetime.now()) + '.wav'
 
-    upload_blob_from_memory('speech210137969', file.read(), filename)
+    #upload_blob_from_memory('speech210137969', file.read(), filename)
 
     # The name of the audio file to transcribe
     gcs_uri = "gs://speech210137969/" + filename
 
-    audio = speech.RecognitionAudio(uri=gcs_uri)
+    audio_content = file.read()
+    audio = speech.RecognitionAudio(content=audio_content) #(uri=gcs_uri)
 
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
@@ -112,13 +113,13 @@ def speech_to_text(request):
     # Detects speech in the audio file
     response = client.recognize(config=config, audio=audio)
 
-    output = ""
-
-    for result in response.results:
-        output += "Transcript: {}".format(result.alternatives[0].transcript)
+    #output = ""
+    output = response.results[0].alternatives[0].transcript
+    #for result in response.results:
+    #    output += "Transcript: {}".format(result.alternatives[0].transcript)
 
     print(output)
 
-    delete_blob('speech210137969', filename)
+    #delete_blob('speech210137969', filename)
 
     return (output, 200, headers)

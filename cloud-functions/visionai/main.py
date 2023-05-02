@@ -73,15 +73,16 @@ def process_png(request):
 
     filename = 'vision_ai/' + str(datetime.datetime.now()) + '.png'
 
-    upload_blob_from_memory('speech210137969', file.read(), filename)
+    #upload_blob_from_memory('speech210137969', file.read(), filename)
 
     # The name of the audio file to transcribe
     gcs_uri = "gs://speech210137969/" + filename
 
     from google.cloud import vision
     client = vision.ImageAnnotatorClient()
-    image = vision.Image()
-    image.source.image_uri = gcs_uri
+    image_content = file.read()
+    image = vision.Image(content=image_content)
+    #image.source.image_uri = gcs_uri
 
     response = client.text_detection(image=image)
     texts = response.text_annotations
@@ -105,6 +106,6 @@ def process_png(request):
 
     print(output)
 
-    delete_blob('speech210137969', filename)
+    #delete_blob('speech210137969', filename)
 
     return (output, 200, headers)
