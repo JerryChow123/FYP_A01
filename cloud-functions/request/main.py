@@ -139,15 +139,18 @@ def delete_data(headers, table_name):
         table_key = request.form['key']
         value = request.form['value']
 
-        try:
-            for k, v in table.get().items():
-                if v[table_key] == value:
-                    table.child(k).delete()
-                    deleted += 1
+        if user_role > 0:
+            try:
+                for k, v in table.get().items():
+                    if v[table_key] == value:
+                        table.child(k).delete()
+                        deleted += 1
 
-            message = str(deleted) + " rows deleted"
-        except Exception as err:
-            message = 'ERROR: ' + str(err)
+                message = str(deleted) + " rows deleted"
+            except Exception as err:
+                message = 'ERROR: ' + str(err)
+        else:
+            message = "no permission"
 
         jsonResp['table'] = table_name
         jsonResp['target'] = value
