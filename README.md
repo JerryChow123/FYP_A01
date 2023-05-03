@@ -1,6 +1,7 @@
 FYP A01 Learning Escape Game Project
 
 Auto build resource in GCP
+-> Google Cloud Shell
 ```
 git clone https://github.com/JerryChow123/FYP_A01.git
 cd terraform
