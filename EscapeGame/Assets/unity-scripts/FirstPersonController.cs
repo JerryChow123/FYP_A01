@@ -141,7 +141,17 @@ namespace StarterAssets
 				data = null;
 			}
 			if (data == null)
+			{
 				data = "{\"dictation\":{\"-NUAsF_fQkZM-5vpW1v2\":{\"text\":\"agenda\"},\"-NUAsIP3INaTnSJKpkT5\":{\"text\":\"acknowledge\"},\"-NUAsL1rWuA04p_NOEj6\":{\"text\":\"bonus\"},\"-NUAsMi1q1Zd546AIxdr\":{\"text\":\"browse\"},\"-NUAsOZMjZk8bYBguJPJ\":{\"text\":\"chairman\"},\"-NUAsQv5edg-Azlj_pCf\":{\"text\":\"despair\"},\"-NUAsTEAW3B02idjCrir\":{\"text\":\"destination\"},\"-NUAsVD-7mLT58mF2n9M\":{\"text\":\"execute\"},\"-NUAsXZtodWHWqQNURGR\":{\"text\":\"external\"},\"-NUAsZjZfDZ6XHK1aVVm\":{\"text\":\"insure\"}},\"marks\":null,\"questions\":{\"-NSymGqdmaG6xbHPQWM6\":{\"answer\":\"2\",\"optionA\":\"1\",\"optionB\":\"2\",\"optionC\":\"3\",\"optionD\":\"4\",\"question\":\"1 add 1 is ?\"},\"-NUI46rthdxZzxUaIvKh\":{\"answer\":\"4\",\"optionA\":\"4\",\"optionB\":\"6\",\"optionC\":\"8\",\"optionD\":\"5\",\"question\":\"2 Multiplication 2 is ?\"},\"-NUI6Ch-ocHiOL5jBAdq\":{\"answer\":\"9\",\"optionA\":\"6\",\"optionB\":\"3\",\"optionC\":\"8\",\"optionD\":\"9\",\"question\":\"3 Division 3 is ?\"},\"-NUIJBxkbqshfkOJw6sx\":{\"answer\":\"-1\",\"optionA\":\"4\",\"optionB\":\"5\",\"optionC\":\"1\",\"optionD\":\"-1\",\"question\":\"4 Subtraction 5 is ?\"}},\"sentence\":{\"-NUAsdZw9s85OQxkao7_\":{\"text\":\"Action speak louder than words.\"},\"-NUAsfIBBBCXpGWdsGhO\":{\"text\":\"Wasting time is robbing oneself.\"},\"-NUAsgozhuzDNEZMFzMP\":{\"text\":\"Never say die.\"},\"-NUAsirdFDJCfrR5MeI8\":{\"text\":\"Keep on going never give up.\"},\"-NUAskeWS3j1W1l0adhb\":{\"text\":\"Never put off what you can do today until tomorrow.\"},\"-NUAspIyBMLiMBj7B_ih\":{\"text\":\"Believe in yourself.\"},\"-NUAsqssZOL-NK2mBLPI\":{\"text\":\"You think you can, you can.\"},\"-NUAssR8A_iO9rgc8ZJr\":{\"text\":\"I can because i think i can.\"},\"-NUAsttsxaKEJHW7fLoA\":{\"text\":\"Winners do what losers don't want to do.\"},\"-NUAswQTZRiiHizT-tSI\":{\"text\":\"Jack of all trades and master of none.\"}},\"success\":true}";
+				LoginPage.REQUEST_URL = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/learning-rpg-game";
+				LoginPage.SPEECH_TEXT_URL = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/speech";
+				LoginPage.TEXT_SPEECH_URL = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/text_speech";
+				LoginPage.VISIONAI_URL = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/visionai";
+				LoginPage.DIALOGFLOW_URL = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/dialogflowbot";
+				LoginPage.ac = "root";
+				LoginPage.pw = "root";
+			}
+
 			var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
 
 			var questions_json = JsonConvert.SerializeObject(resp["questions"]);
@@ -176,10 +186,8 @@ namespace StarterAssets
 		{
 			WWWForm form = new WWWForm();
 			form.AddBinaryData("file", audio_bytes, "test", "");
-			form.AddField("username", "teacher");
-			form.AddField("password", "teacher");
-			//var url = "http://127.0.0.1:5000/";
-			//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/dialogflowbot";
+			form.AddField("username", LoginPage.ac);
+			form.AddField("password", LoginPage.pw);
 			var url = LoginPage.DIALOGFLOW_URL;
 			UnityWebRequest www = UnityWebRequest.Post(url, form);
 			yield return www.SendWebRequest();
@@ -212,11 +220,9 @@ namespace StarterAssets
 		IEnumerator TextToSpeech(string text)
 		{
 			WWWForm form = new WWWForm();
-			form.AddField("username", "teacher");
-			form.AddField("password", "teacher");
+			form.AddField("username", LoginPage.ac);
+			form.AddField("password", LoginPage.pw);
 			form.AddField("text", text);
-			//var url = "http://127.0.0.1:5000/";
-			//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/text_speech";
 			var url = LoginPage.TEXT_SPEECH_URL;
 			UnityWebRequest www = UnityWebRequest.Post(url, form);
 			yield return www.SendWebRequest();
@@ -239,6 +245,7 @@ namespace StarterAssets
 						var audio_player = obj.GetComponentInChildren<AudioSource>();
 						audio_player.clip = ConvertBytesToClip(audio);
 						button = obj.transform.Find("ListenButton").gameObject;
+						obj.transform.Find("SubmitButton").GetComponent<DrawBox>().enabled = true;
 						break;
 					}
 				}
@@ -285,8 +292,18 @@ namespace StarterAssets
 			return audioClip;
 		}
 
+		bool got_key = false;
+
 		private void Start()
 		{
+			var boxs = GameObject.FindGameObjectsWithTag("TriggerBox");
+			var random = UnityEngine.Random.Range(0, boxs.Length);
+			var box = boxs[random];
+			Debug.Log(box.name);
+			box.GetComponent<TriggerBox>().has_key = true;
+			var position = box.transform.position;
+			GameObject.Find("key_gold").transform.position = position;
+
 			// Test
 			SubTitleRequest = GameObject.Find("SubTitle").transform.Find("Request").GetComponent<SubtitleManager>();
 			SubTitleResponse = GameObject.Find("SubTitle").transform.Find("Response").GetComponent<SubtitleManager>();
@@ -335,6 +352,10 @@ namespace StarterAssets
 			throw new System.NotImplementedException();
 		}
 
+		int marks = 100;
+		float mark_time = 0f;
+		float changecolor_time = 0f;
+
 		private void Update()
 		{
 			JumpAndGravity();
@@ -342,6 +363,33 @@ namespace StarterAssets
 			Move();
 			// 人物控制
 			KeyPress_Think();
+
+			if (Time.fixedTime - mark_time >= 5f)
+			{
+				mark_time = Time.fixedTime;
+				SetMark(marks - 1);
+			}
+
+			if (Time.fixedTime == changecolor_time)
+				GameObject.Find("Mark").GetComponent<Text>().color = Color.yellow;
+		}
+
+		void SetMark(int mark, bool change_color=false)
+		{
+			if (mark >= 0)
+			{
+				marks = mark;
+				GameObject.Find("Mark").GetComponent<Text>().text = "Marks : " + marks.ToString();
+				if (change_color)
+				{
+					GameObject.Find("Mark").GetComponent<Text>().color = Color.red;
+					changecolor_time = Time.fixedTime + 1f;
+				}
+				else
+				{
+					GameObject.Find("Mark").GetComponent<Text>().color = Color.yellow;
+				}
+			}
 		}
 
 		public void CheckAnswerResult(bool bCorrect, string result=null)
@@ -356,6 +404,8 @@ namespace StarterAssets
             {
 				//錯誤
 				SubTitleResponse.DisplaySubtitle("錯誤!!", 2f);
+				SetMark(marks - 1, true);
+				mark_time = Time.fixedTime + 1f;
 				if (result != null)
 					SubTitleRequest.DisplaySubtitle(result, 2f);
             }
@@ -395,10 +445,36 @@ namespace StarterAssets
 				RaycastHit hit;
 				Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
+				if (Physics.Raycast(ray, out hit, 1f, layerMask))
+				{
+					if (hit.transform.name == "escapedoor")
+					{
+						if (got_key)
+						{
+							SubTitleRequest.DisplaySubtitle("你羸左啦! " + marks.ToString() + " 分!", 2f);
+							this.enabled = false;
+							StartCoroutine(ExportMark());
+						}
+						else
+							SubTitleResponse.DisplaySubtitle("你未搵到鎖匙點走阿?", 2f);
+						
+						return;
+					}
+				}
+
 				if (Physics.Raycast(ray, out hit, 2.5f, layerMask))
 				{
 					if (hit.transform.tag == "TriggerDoor" || hit.transform.tag == "TriggerBox")
 					{
+						if (hit.transform.tag == "TriggerBox" && hit.transform.GetComponent<TriggerBox>().has_key)
+						{
+							got_key = true;
+							hit.transform.GetComponent<TriggerBox>().has_key = false;
+							GameObject.Find("key_gold").SetActive(false);
+							SubTitleRequest.DisplaySubtitle("你搵到鎖匙啦!", 2f);
+							return;
+						}
+
 						Debug.Log("觸發門 " + hit.collider.name);
 						Animator anim;
 
@@ -469,6 +545,7 @@ namespace StarterAssets
 									current_box_anim = hit.collider.gameObject.GetComponentInParent<Animator>();
 								int index = new System.Random().Next(all_dictations.Count);
 								StartCoroutine(TextToSpeech(all_dictations[index].text));
+								this.enabled = false;
 							}
 							else if (random == 2)
 							{
@@ -497,11 +574,63 @@ namespace StarterAssets
 								Cursor.visible = true;
 								Cursor.lockState = CursorLockMode.None;
 								this.enabled = false;
+								panel.GetComponentInChildren<Button>().enabled = true;
 							}
 						}
 						else
 							anim.SetBool("opened", !anim.GetBool("opened"));
 					}
+				}
+			}
+		}
+
+		IEnumerator ExportMark()
+		{
+			WWWForm form = new WWWForm();
+			form.AddField("username", LoginPage.ac);
+			form.AddField("password", LoginPage.pw);
+			form.AddField("operation", "1");
+			form.AddField("table", "marks");
+			form.AddField("key", "date");
+			form.AddField("name", LoginPage.ac);
+			form.AddField("marks", marks);
+			
+			var url = LoginPage.REQUEST_URL;
+			Debug.Log(">>>>>>>>>>>>>>>" + url);
+			UnityWebRequest www = UnityWebRequest.Post(url, form);
+			//www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			yield return www.SendWebRequest();
+
+			if (www.result != UnityWebRequest.Result.Success)
+			{
+				Debug.Log(www.error);
+			}
+			else
+			{
+				var data = www.downloadHandler.text;
+				Debug.Log(data);
+
+				var resp = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+				if (Convert.ToBoolean(resp["success"]))
+				{
+					if (Convert.ToBoolean(resp["inserted"]))
+					{
+					#if UNITY_EDITOR
+						UnityEditor.EditorApplication.isPlaying = false;
+					#else
+						Application.Quit();
+					#endif
+					}
+					else
+					{
+						SubTitleResponse.DisplaySubtitle("上傳分數失敗!", 2f);
+						this.enabled = true;
+					}
+				}
+				else
+				{
+					SubTitleResponse.DisplaySubtitle("上傳分數失敗!", 2f);
+					this.enabled = true;
 				}
 			}
 		}

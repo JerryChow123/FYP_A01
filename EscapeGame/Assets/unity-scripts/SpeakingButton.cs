@@ -88,6 +88,7 @@ public class SpeakingButton : MonoBehaviour
             //StartCoroutine(SendVoiceRecord(recorder.fileName));
             StartCoroutine(SendVoiceRecord(null, recorder.data));
             GetComponentInChildren<Text>().text = "Record";
+            button.enabled = false;
         }
         else
         {

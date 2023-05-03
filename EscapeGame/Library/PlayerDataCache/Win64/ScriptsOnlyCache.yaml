@@ -13,6 +13,7 @@ ScriptsOnlyBuild:
     - StarterAssets.FirstPersonController
     - StarterAssets.StarterAssetsInputs
     - SubtitleManager
+    - TriggerBox
     - VoiceRecorder
     Cinemachine.dll:
     - Cinemachine.Cinemachine3rdPersonFollow
@@ -73,8 +74,10 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -266,6 +269,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 6872}
     - Class: 114
       Script: {instanceID: 7914}
+    - Class: 114
+      Script: {instanceID: 58572}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 124
@@ -1836,9 +1841,15 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: TouchInputModule
+  - hash:
+      serializedVersion: 2
+      Hash: b0af2c2bc140d8c7aecd485427b9ca4b
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TriggerBox
   platform: 19
   scenePathNames:
   - Assets/LoginPage.unity
   - Assets/EscapeGame.unity
   - Assets/DrawBox.unity
-  playerPath: C:/Users/Jerry/Desktop/demo/EscapeGame.exe
+  playerPath: Z:/_/FYP/github_main/demo/EscapeGame.exe

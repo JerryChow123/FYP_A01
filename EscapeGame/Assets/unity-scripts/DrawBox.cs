@@ -48,8 +48,6 @@ public class DrawBox : MonoBehaviour
 			byte[] myData = System.IO.File.ReadAllBytes(pngPath);
 			form.AddBinaryData("file", myData, "test", "");
 		}
-		//var url = "http://192.168.0.135:5000/";
-		//var url = "https://asia-east2-industrial-silo-356001.cloudfunctions.net/visionai";
 		var url = LoginPage.VISIONAI_URL;
 		UnityWebRequest www = UnityWebRequest.Post(url, form);
 		yield return www.SendWebRequest();
@@ -118,6 +116,7 @@ public class DrawBox : MonoBehaviour
 				//var path = @"C:\_Test\test.png";
 				//File.WriteAllBytes(path, bytes);
 				StartCoroutine(SendPng(null, bytes));
+				this.enabled = false;
 
 				break;
 
