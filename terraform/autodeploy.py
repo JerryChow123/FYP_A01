@@ -43,7 +43,7 @@ def config_py(filename, target, replacement):
 projectid = os.environ['DEVSHELL_PROJECT_ID']
 os.system('mkdir first second third')
 config_provider(projectid, region, zone)
-projectid = "3n1jn154512"
+#projectid = ""
 config_terraform('firebase.tf', 'first/', projectid)
 config_terraform('dialogflow.tf', 'first/', projectid)
 config_terraform('cloudfunction.tf', 'second/', projectid)
